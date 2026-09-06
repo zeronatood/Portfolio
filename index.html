@@ -69,7 +69,7 @@
             --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-base: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-slow: 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-page: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-page: 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
 
             --sidebar-width: 260px;
             --progress-bar-height: 4px;
@@ -143,6 +143,10 @@
             .floating-shape {
                 display: none !important;
             }
+            .animate-on-scroll {
+                opacity: 1 !important;
+                transform: none !important;
+            }
         }
 
         img {
@@ -209,7 +213,7 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.5;
+            opacity: 0.6;
         }
 
         /* ==================== PROGRESS BAR ==================== */
@@ -226,9 +230,35 @@
             height: 100%;
             background: linear-gradient(90deg, var(--purple-primary), var(--purple-light));
             border-radius: 0 2px 2px 0;
-            transition: width var(--transition-base);
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 0 10px var(--purple-glow);
             width: 10%;
+            position: relative;
+        }
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 20px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4));
+            border-radius: 0 2px 2px 0;
+            animation: shimmerProgress 2s infinite;
+        }
+        @keyframes shimmerProgress {
+            0% {
+                opacity: 0.3;
+                transform: translateX(-10px);
+            }
+            50% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            100% {
+                opacity: 0.3;
+                transform: translateX(10px);
+            }
         }
 
         /* ==================== PAGE INDICATOR ==================== */
@@ -248,6 +278,27 @@
             padding: 6px 16px;
             letter-spacing: 0.5px;
             transition: all var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+        .page-indicator .indicator-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--purple-primary);
+            margin-right: 6px;
+            animation: pulseDot 1.5s ease-in-out infinite;
+        }
+        @keyframes pulseDot {
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.6);
+                opacity: 0.5;
+            }
         }
 
         /* ==================== SIDEBAR NAVIGATION ==================== */
@@ -292,6 +343,16 @@
             user-select: none;
             text-align: center;
             line-height: 1.3;
+            animation: logoFloat 4s ease-in-out infinite;
+        }
+        @keyframes logoFloat {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-4px);
+            }
         }
         .sidebar-logo small {
             display: block;
@@ -323,17 +384,36 @@
             position: relative;
             white-space: nowrap;
             letter-spacing: 0.3px;
+            overflow: hidden;
+        }
+        .sidebar-nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--purple-primary);
+            transform: scaleY(0);
+            transition: transform var(--transition-fast);
+            border-radius: 0 2px 2px 0;
+        }
+        .sidebar-nav-item:hover::before,
+        .sidebar-nav-item.active::before {
+            transform: scaleY(1);
         }
         .sidebar-nav-item:hover {
             background: var(--purple-glass);
             color: var(--text-primary);
             border-color: var(--border-color);
+            transform: translateX(4px);
         }
         .sidebar-nav-item.active {
             background: var(--purple-primary);
             color: var(--text-on-purple);
             box-shadow: var(--shadow-glow);
             border-color: transparent;
+            transform: translateX(4px);
         }
         .sidebar-nav-item .nav-number {
             font-size: 0.65rem;
@@ -342,9 +422,14 @@
             opacity: 0.7;
             min-width: 28px;
             text-align: center;
+            transition: all var(--transition-fast);
         }
         .sidebar-nav-item.active .nav-number {
             opacity: 1;
+            color: var(--text-on-purple);
+        }
+        .sidebar-nav-item .nav-label {
+            transition: all var(--transition-fast);
         }
 
         /* Theme Toggle in Sidebar */
@@ -369,16 +454,24 @@
             gap: 8px;
             width: 100%;
             letter-spacing: 0.5px;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
         }
         .theme-toggle-btn:hover {
             background: var(--purple-primary);
             color: var(--text-on-purple);
             border-color: var(--purple-primary);
+            transform: scale(1.02);
+            box-shadow: var(--shadow-glow);
+        }
+        .theme-toggle-btn:active {
+            transform: scale(0.96);
         }
 
         /* ==================== MOBILE NAV TOGGLE ==================== */
         .mobile-nav-toggle {
-            display: flex;
+            display: none;
             position: fixed;
             top: 16px;
             left: 16px;
@@ -402,6 +495,10 @@
         .mobile-nav-toggle:hover {
             background: var(--purple-primary);
             color: white;
+            transform: scale(1.05);
+        }
+        .mobile-nav-toggle:active {
+            transform: scale(0.92);
         }
         .mobile-nav-toggle .hamburger-line {
             display: block;
@@ -459,15 +556,18 @@
             justify-content: center;
             padding: 20px;
             min-height: 100vh;
+            perspective: 1200px;
         }
         .page {
             display: none;
             width: 100%;
             max-width: 1100px;
             margin: 0 auto;
-            animation: pageIn var(--transition-page);
             position: relative;
             padding: 30px 20px;
+            transform-origin: center center;
+            animation: pageIn var(--transition-page);
+            will-change: transform, opacity;
         }
         .page.active {
             display: block;
@@ -479,8 +579,8 @@
         @keyframes pageIn {
             0% {
                 opacity: 0;
-                transform: translateY(24px) scale(0.97);
-                filter: blur(4px);
+                transform: translateY(40px) scale(0.94) rotateX(4deg);
+                filter: blur(6px);
             }
             40% {
                 opacity: 1;
@@ -488,20 +588,20 @@
             }
             100% {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translateY(0) scale(1) rotateX(0deg);
                 filter: blur(0);
             }
         }
         @keyframes pageOut {
             0% {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translateY(0) scale(1) rotateX(0deg);
                 filter: blur(0);
             }
             100% {
                 opacity: 0;
-                transform: translateY(-24px) scale(0.97);
-                filter: blur(4px);
+                transform: translateY(-40px) scale(0.94) rotateX(-4deg);
+                filter: blur(6px);
             }
         }
 
@@ -531,17 +631,34 @@
             box-shadow: var(--shadow-md);
             transition: all var(--transition-fast);
             user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-control-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.2), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .nav-control-btn:hover::after {
+            opacity: 1;
         }
         .nav-control-btn:hover {
             background: var(--purple-primary);
             color: white;
             box-shadow: var(--shadow-glow);
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.04);
+        }
+        .nav-control-btn:active {
+            transform: translateY(0) scale(0.94);
         }
         .nav-control-btn:disabled {
             opacity: 0.3;
             pointer-events: none;
-            transform: none;
+            transform: none !important;
         }
         .nav-home-btn {
             background: var(--purple-primary);
@@ -553,7 +670,7 @@
         }
         .nav-home-btn:hover {
             background: var(--purple-dark);
-            transform: translateY(-2px) scale(1.05);
+            transform: translateY(-3px) scale(1.06) !important;
         }
 
         /* ==================== GLASSMORPHISM CARD ==================== */
@@ -566,10 +683,57 @@
             box-shadow: var(--shadow-md);
             padding: 28px 32px;
             transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(167, 139, 250, 0.06), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.6s;
+            pointer-events: none;
+        }
+        .glass-card:hover::before {
+            opacity: 1;
         }
         .glass-card:hover {
             box-shadow: var(--shadow-lg);
             border-color: var(--purple-light);
+            transform: translateY(-4px);
+        }
+
+        /* ==================== ANIMATE ON SCROLL ==================== */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .animate-on-scroll.delay-1 {
+            transition-delay: 0.05s;
+        }
+        .animate-on-scroll.delay-2 {
+            transition-delay: 0.10s;
+        }
+        .animate-on-scroll.delay-3 {
+            transition-delay: 0.15s;
+        }
+        .animate-on-scroll.delay-4 {
+            transition-delay: 0.20s;
+        }
+        .animate-on-scroll.delay-5 {
+            transition-delay: 0.25s;
+        }
+        .animate-on-scroll.delay-6 {
+            transition-delay: 0.30s;
         }
 
         /* ==================== HEADINGS ==================== */
@@ -581,6 +745,22 @@
             letter-spacing: -0.5px;
             margin-bottom: 8px;
             line-height: 1.2;
+            position: relative;
+            display: inline-block;
+        }
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 40%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--purple-primary), var(--purple-light));
+            border-radius: 2px;
+            transition: width var(--transition-base);
+        }
+        .page-title:hover::after {
+            width: 80%;
         }
         .page-subtitle {
             font-size: 0.95rem;
@@ -600,6 +780,10 @@
             background: var(--purple-primary);
             border-radius: 2px;
             display: inline-block;
+            transition: width var(--transition-base);
+        }
+        .page-subtitle:hover::before {
+            width: 80px;
         }
         .section-heading {
             font-size: 1.4rem;
@@ -607,9 +791,20 @@
             color: var(--purple-primary);
             margin: 24px 0 16px;
             letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .section-heading .accent {
             color: var(--purple-light);
+        }
+        .section-heading i {
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: transform var(--transition-fast);
+        }
+        .section-heading:hover i {
+            transform: rotate(10deg) scale(1.1);
         }
 
         /* ==================== BUTTONS ==================== */
@@ -627,14 +822,28 @@
             align-items: center;
             gap: 10px;
             border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.2), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .btn-primary:hover::after {
+            opacity: 1;
         }
         .btn-primary:hover {
             background: var(--purple-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 30px var(--purple-glow);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 40px var(--purple-glow);
         }
         .btn-primary:active {
-            transform: translateY(-1px);
+            transform: translateY(-1px) scale(0.97);
         }
         .btn-outline {
             background: transparent;
@@ -649,11 +858,27 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-outline::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--purple-primary);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            border-radius: 50px;
+            z-index: -1;
         }
         .btn-outline:hover {
-            background: var(--purple-glass);
-            border-color: var(--purple-light);
-            transform: translateY(-2px);
+            color: white;
+            border-color: var(--purple-primary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-glow);
+        }
+        .btn-outline:hover::after {
+            opacity: 1;
         }
         .btn-sm {
             padding: 8px 18px;
@@ -661,7 +886,7 @@
             border-radius: 40px;
         }
 
-        /* ==================== COVER PAGE (01) ==================== */
+        /* ==================== COVER PAGE (1) ==================== */
         .cover-page {
             display: flex;
             align-items: center;
@@ -685,6 +910,16 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 10px;
+            animation: gradientShift 6s ease-in-out infinite;
+        }
+        @keyframes gradientShift {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
         }
         .cover-school {
             font-size: 1.1rem;
@@ -714,6 +949,15 @@
             font-weight: 600;
             color: var(--text-secondary);
             letter-spacing: 0.3px;
+            transition: all var(--transition-fast);
+            cursor: default;
+        }
+        .cover-badge:hover {
+            background: var(--purple-primary);
+            color: white;
+            border-color: var(--purple-primary);
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: var(--shadow-glow);
         }
         .cover-image-wrapper {
             flex: 1;
@@ -734,16 +978,27 @@
             box-shadow: var(--shadow-lg), var(--shadow-glow);
             position: relative;
             z-index: 5;
-            transition: transform var(--transition-base);
+            transition: all var(--transition-base);
             background: var(--bg-card);
+            animation: imagePulse 4s ease-in-out infinite;
+        }
+        @keyframes imagePulse {
+            0%,
+            100% {
+                box-shadow: var(--shadow-lg), var(--shadow-glow);
+            }
+            50% {
+                box-shadow: var(--shadow-lg), 0 0 60px var(--purple-glow);
+            }
         }
         .cover-image:hover {
-            transform: scale(1.02);
+            transform: scale(1.03) rotate(-1deg);
         }
         .cover-geometric {
             position: absolute;
             border-radius: 24px;
             pointer-events: none;
+            transition: all var(--transition-slow);
         }
         .cover-geometric.geo-1 {
             width: 150px;
@@ -752,8 +1007,20 @@
             top: -20px;
             right: -20px;
             z-index: 1;
-            animation: floatGeo 6s ease-in-out infinite;
+            animation: floatGeo1 7s ease-in-out infinite;
             border: 2px solid var(--border-color);
+        }
+        @keyframes floatGeo1 {
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            33% {
+                transform: translateY(-18px) rotate(5deg) scale(1.04);
+            }
+            66% {
+                transform: translateY(10px) rotate(-3deg) scale(0.96);
+            }
         }
         .cover-geometric.geo-2 {
             width: 80px;
@@ -764,7 +1031,16 @@
             z-index: 2;
             border-radius: 50%;
             opacity: 0.5;
-            animation: floatGeo 8s ease-in-out infinite reverse;
+            animation: floatGeo2 9s ease-in-out infinite reverse;
+        }
+        @keyframes floatGeo2 {
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.1);
+            }
         }
         .cover-geometric.geo-3 {
             width: 60px;
@@ -775,15 +1051,15 @@
             right: -30px;
             z-index: 1;
             border-radius: 50%;
-            animation: floatGeo 7s ease-in-out infinite 1s;
+            animation: floatGeo3 8s ease-in-out infinite 1s;
         }
-        @keyframes floatGeo {
+        @keyframes floatGeo3 {
             0%,
             100% {
                 transform: translateY(0) rotate(0deg);
             }
             50% {
-                transform: translateY(-15px) rotate(5deg);
+                transform: translateY(-12px) rotate(180deg);
             }
         }
         .cover-explore-btn {
@@ -792,7 +1068,7 @@
             padding: 16px 36px;
         }
 
-        /* ==================== PROFILE PAGE (02) ==================== */
+        /* ==================== PROFILE PAGE (2) ==================== */
         .profile-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -814,11 +1090,12 @@
             border: 4px solid var(--purple-light);
             box-shadow: var(--shadow-glow);
             cursor: default;
-            transition: transform var(--transition-base);
+            transition: all var(--transition-base);
             background: var(--bg-card);
         }
         .profile-photo:hover {
-            transform: scale(1.05);
+            transform: scale(1.06) rotate(-2deg);
+            box-shadow: 0 0 50px var(--purple-glow);
         }
         .profile-info-list {
             display: flex;
@@ -832,6 +1109,11 @@
             padding: 10px 0;
             border-bottom: 1px solid var(--border-color);
             font-size: 0.9rem;
+            transition: all var(--transition-fast);
+        }
+        .profile-info-row:hover {
+            padding-left: 8px;
+            border-bottom-color: var(--purple-light);
         }
         .profile-info-row .label {
             font-weight: 600;
@@ -862,18 +1144,36 @@
             color: var(--text-primary);
             transition: all var(--transition-fast);
             text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .social-icon-link::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--purple-primary);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            border-radius: 50%;
         }
         .social-icon-link:hover {
-            background: var(--purple-primary);
             color: white;
             border-color: var(--purple-primary);
-            transform: translateY(-3px);
+            transform: translateY(-4px) scale(1.1);
             box-shadow: var(--shadow-glow);
+        }
+        .social-icon-link:hover::after {
+            opacity: 1;
+        }
+        .social-icon-link i {
+            position: relative;
+            z-index: 1;
         }
         .tags-list {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+            justify-content: center;
         }
         .tag {
             background: var(--purple-glass);
@@ -883,9 +1183,18 @@
             font-size: 0.78rem;
             font-weight: 500;
             color: var(--text-secondary);
+            transition: all var(--transition-fast);
+            cursor: default;
+        }
+        .tag:hover {
+            background: var(--purple-primary);
+            color: white;
+            border-color: var(--purple-primary);
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: var(--shadow-glow);
         }
 
-        /* ==================== STATEMENT PAGE (03) ==================== */
+        /* ==================== STATEMENT PAGE (3) ==================== */
         .statement-text {
             font-size: 1rem;
             line-height: 2;
@@ -894,6 +1203,10 @@
         }
         .statement-block {
             margin-bottom: 24px;
+            transition: all var(--transition-fast);
+        }
+        .statement-block:hover {
+            transform: translateX(4px);
         }
         .statement-block h4 {
             font-weight: 800;
@@ -902,6 +1215,18 @@
             margin-bottom: 8px;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .statement-block h4::before {
+            content: '◆';
+            font-size: 0.6rem;
+            color: var(--purple-light);
+            transition: transform var(--transition-fast);
+        }
+        .statement-block:hover h4::before {
+            transform: rotate(90deg);
         }
         .highlight-quote {
             background: var(--purple-glass);
@@ -914,6 +1239,11 @@
             margin: 20px 0;
             font-style: italic;
             position: relative;
+            transition: all var(--transition-base);
+        }
+        .highlight-quote:hover {
+            box-shadow: var(--shadow-glow);
+            transform: scale(1.01);
         }
         .highlight-quote::before {
             content: '"';
@@ -926,7 +1256,7 @@
             line-height: 1;
         }
 
-        /* ==================== EDUCATION PAGE (04) ==================== */
+        /* ==================== EDUCATION PAGE (4) ==================== */
         .education-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -941,11 +1271,28 @@
             border-radius: var(--radius-md);
             padding: 20px;
             text-align: center;
-            transition: all var(--transition-fast);
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--purple-primary), var(--purple-light));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--transition-base);
+        }
+        .stat-card:hover::before {
+            transform: scaleX(1);
         }
         .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: var(--shadow-lg);
             border-color: var(--purple-light);
         }
         .stat-card .stat-value {
@@ -953,6 +1300,10 @@
             font-weight: 900;
             color: var(--purple-primary);
             line-height: 1.2;
+            transition: all var(--transition-fast);
+        }
+        .stat-card:hover .stat-value {
+            transform: scale(1.08);
         }
         .stat-card .stat-label {
             font-size: 0.8rem;
@@ -969,6 +1320,11 @@
             padding: 20px;
             border: 1px solid var(--border-color);
             position: relative;
+            transition: all var(--transition-base);
+        }
+        .chart-container:hover {
+            border-color: var(--purple-light);
+            box-shadow: var(--shadow-md);
         }
         .student-status-doc {
             margin-top: 20px;
@@ -987,9 +1343,10 @@
         .student-status-doc img:hover {
             border-color: var(--purple-light);
             box-shadow: var(--shadow-md);
+            transform: scale(1.02);
         }
 
-        /* ==================== SKILLS PAGE (05) ==================== */
+        /* ==================== SKILLS PAGE (5) ==================== */
         .skills-category {
             margin-bottom: 30px;
         }
@@ -999,12 +1356,29 @@
             color: var(--purple-primary);
             margin-bottom: 16px;
             letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .skills-category h3 i {
+            transition: transform var(--transition-fast);
+        }
+        .skills-category:hover h3 i {
+            transform: rotate(10deg) scale(1.1);
         }
         .skill-item {
             display: flex;
             align-items: center;
             gap: 14px;
             margin-bottom: 10px;
+            transition: all var(--transition-fast);
+            padding: 4px 0;
+            border-radius: 8px;
+        }
+        .skill-item:hover {
+            background: var(--purple-glass);
+            padding-left: 12px;
+            transform: translateX(4px);
         }
         .skill-name {
             min-width: 120px;
@@ -1024,8 +1398,34 @@
             height: 100%;
             background: linear-gradient(90deg, var(--purple-primary), var(--purple-light));
             border-radius: 10px;
-            transition: width 1s ease;
+            transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 0 10px var(--purple-glow);
+            position: relative;
+        }
+        .skill-bar-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
+            border-radius: 10px;
+            animation: shimmerBar 2s infinite;
+        }
+        @keyframes shimmerBar {
+            0% {
+                opacity: 0.3;
+                transform: translateX(-20px);
+            }
+            50% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            100% {
+                opacity: 0.3;
+                transform: translateX(20px);
+            }
         }
         .skill-percent {
             font-weight: 700;
@@ -1033,115 +1433,14 @@
             color: var(--purple-primary);
             min-width: 40px;
             text-align: right;
-        }
-
-        /* ==================== ACTIVITIES PAGE (06) ==================== */
-        .timeline {
-            position: relative;
-            padding-left: 30px;
-            border-left: 3px solid var(--border-color);
-            margin-left: 10px;
-        }
-        .timeline-item {
-            position: relative;
-            margin-bottom: 28px;
-            cursor: pointer;
             transition: all var(--transition-fast);
         }
-        .timeline-item:hover .timeline-card {
-            box-shadow: var(--shadow-lg);
-            border-color: var(--purple-light);
-            transform: translateX(4px);
-        }
-        .timeline-dot {
-            position: absolute;
-            left: -38px;
-            top: 20px;
-            width: 14px;
-            height: 14px;
-            background: var(--purple-primary);
-            border-radius: 50%;
-            border: 3px solid var(--bg-primary);
-            box-shadow: 0 0 10px var(--purple-glow);
-        }
-        .timeline-card {
-            background: var(--bg-glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 18px 22px;
-            transition: all var(--transition-base);
-            box-shadow: var(--shadow-sm);
-        }
-        .timeline-year {
-            font-weight: 800;
-            color: var(--purple-primary);
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-        }
-        .timeline-title {
-            font-weight: 700;
-            font-size: 1.05rem;
-            color: var(--text-primary);
-            margin: 4px 0;
-        }
-        .timeline-role {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        .timeline-desc {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        .category-badge {
-            display: inline-block;
-            background: var(--purple-glass);
-            border: 1px solid var(--border-color);
-            border-radius: 50px;
-            padding: 3px 12px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 0.3px;
-            margin-top: 6px;
-        }
-        .filter-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        .filter-btn {
-            padding: 8px 18px;
-            border-radius: 50px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            background: var(--purple-glass);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            letter-spacing: 0.3px;
-            transition: all var(--transition-fast);
-        }
-        .filter-btn:hover {
-            background: var(--purple-light);
-            color: white;
-            border-color: var(--purple-light);
-        }
-        .filter-btn.active {
-            background: var(--purple-primary);
-            color: white;
-            border-color: var(--purple-primary);
-            box-shadow: var(--shadow-glow);
+        .skill-item:hover .skill-percent {
+            transform: scale(1.1);
+            color: var(--purple-dark);
         }
 
-        /* ==================== CERTIFICATES PAGE (07) ==================== */
+        /* ==================== CERTIFICATES PAGE (6) ==================== */
         .cert-search-input {
             width: 100%;
             max-width: 400px;
@@ -1149,6 +1448,13 @@
             border-radius: 50px;
             margin-bottom: 20px;
             font-size: 0.9rem;
+            transition: all var(--transition-fast);
+            border: 2px solid var(--border-color);
+        }
+        .cert-search-input:focus {
+            border-color: var(--purple-primary);
+            box-shadow: 0 0 0 4px var(--purple-glow);
+            transform: scale(1.02);
         }
         .cert-grid {
             display: grid;
@@ -1163,9 +1469,10 @@
             cursor: pointer;
             transition: all var(--transition-base);
             box-shadow: var(--shadow-sm);
+            transform-origin: center;
         }
         .cert-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-8px) scale(1.02);
             box-shadow: var(--shadow-lg);
             border-color: var(--purple-light);
         }
@@ -1175,6 +1482,10 @@
             object-fit: cover;
             background: var(--bg-card);
             cursor: pointer;
+            transition: transform var(--transition-fast);
+        }
+        .cert-card:hover img {
+            transform: scale(1.04);
         }
         .cert-card-body {
             padding: 14px 16px;
@@ -1199,7 +1510,7 @@
             color: var(--purple-primary);
         }
 
-        /* ==================== PROJECTS PAGE (08) ==================== */
+        /* ==================== PROJECTS PAGE (7) ==================== */
         .project-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -1215,9 +1526,10 @@
             box-shadow: var(--shadow-sm);
             display: flex;
             flex-direction: column;
+            transform-origin: center;
         }
         .project-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px) scale(1.02);
             box-shadow: var(--shadow-lg);
             border-color: var(--purple-light);
         }
@@ -1226,6 +1538,10 @@
             height: 170px;
             object-fit: cover;
             background: var(--bg-card);
+            transition: transform var(--transition-fast);
+        }
+        .project-card:hover img {
+            transform: scale(1.04);
         }
         .project-card-body {
             padding: 16px 18px;
@@ -1265,83 +1581,15 @@
             font-weight: 600;
             color: var(--purple-primary);
             letter-spacing: 0.3px;
-        }
-
-        /* ==================== ACHIEVEMENTS PAGE (09) ==================== */
-        .achievement-highlight {
-            background: linear-gradient(135deg, var(--purple-glass), var(--purple-bg));
-            border: 2px solid var(--purple-primary);
-            border-radius: var(--radius-lg);
-            padding: 28px 32px;
-            margin-bottom: 30px;
-            text-align: center;
-            box-shadow: var(--shadow-glow);
-            position: relative;
-            overflow: hidden;
-        }
-        .achievement-highlight::before {
-            content: '★';
-            position: absolute;
-            top: -20px;
-            right: -10px;
-            font-size: 8rem;
-            opacity: 0.1;
-            color: var(--purple-primary);
-        }
-        .achievement-highlight .ach-title {
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--purple-primary);
-            margin-bottom: 4px;
-        }
-        .achievement-highlight .ach-desc {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-        }
-        .achievement-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .achievement-item {
-            background: var(--bg-glass);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 18px 22px;
-            display: flex;
-            gap: 16px;
-            align-items: flex-start;
             transition: all var(--transition-fast);
-            box-shadow: var(--shadow-sm);
         }
-        .achievement-item:hover {
-            border-color: var(--purple-light);
-            box-shadow: var(--shadow-md);
-            transform: translateX(4px);
-        }
-        .achievement-icon {
-            font-size: 1.6rem;
-            color: var(--purple-primary);
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-        .achievement-info h4 {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: var(--text-primary);
-        }
-        .achievement-info p {
-            font-size: 0.82rem;
-            color: var(--text-secondary);
-        }
-        .achievement-info .ach-year {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            letter-spacing: 0.5px;
+        .project-tech-tag:hover {
+            background: var(--purple-primary);
+            color: white;
+            transform: scale(1.05);
         }
 
-        /* ==================== CONTACT PAGE (10) ==================== */
+        /* ==================== CONTACT PAGE (8) ==================== */
         .contact-content {
             text-align: center;
             padding: 40px 20px;
@@ -1352,6 +1600,11 @@
             letter-spacing: -1px;
             color: var(--text-primary);
             margin-bottom: 10px;
+            animation: gradientShift 6s ease-in-out infinite;
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         .contact-subtitle {
             font-size: 1.1rem;
@@ -1382,7 +1635,55 @@
             background: var(--purple-primary);
             color: white;
             border-color: var(--purple-primary);
+            transform: translateY(-4px) scale(1.04);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* ==================== FILTER BUTTONS ==================== */
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .filter-btn {
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: var(--purple-glass);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            letter-spacing: 0.3px;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+        .filter-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--purple-primary);
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+            border-radius: 50px;
+        }
+        .filter-btn:hover {
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: var(--shadow-sm);
+        }
+        .filter-btn:hover::after {
+            opacity: 0.08;
+        }
+        .filter-btn.active {
+            background: var(--purple-primary);
+            color: white;
+            border-color: var(--purple-primary);
+            box-shadow: var(--shadow-glow);
             transform: translateY(-2px);
+        }
+        .filter-btn.active::after {
+            opacity: 0;
         }
 
         /* ==================== MODAL SYSTEM ==================== */
@@ -1403,7 +1704,7 @@
         }
         .modal-overlay.show {
             display: flex;
-            animation: fadeInOverlay 0.3s ease;
+            animation: fadeInOverlay 0.4s ease;
         }
         @keyframes fadeInOverlay {
             from {
@@ -1423,17 +1724,17 @@
             overflow-y: auto;
             padding: 32px;
             box-shadow: var(--shadow-lg);
-            animation: modalIn 0.4s ease;
+            animation: modalIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
         }
         @keyframes modalIn {
             from {
                 opacity: 0;
-                transform: scale(0.9) translateY(20px);
+                transform: scale(0.85) translateY(30px) rotateX(6deg);
             }
             to {
                 opacity: 1;
-                transform: scale(1) translateY(0);
+                transform: scale(1) translateY(0) rotateX(0deg);
             }
         }
         .modal-close-btn {
@@ -1456,7 +1757,8 @@
         .modal-close-btn:hover {
             background: var(--purple-primary);
             color: white;
-            transform: rotate(90deg);
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: var(--shadow-glow);
         }
         .modal-title {
             font-size: 1.5rem;
@@ -1477,6 +1779,11 @@
             border-radius: var(--radius-md);
             margin: 12px 0;
             border: 1px solid var(--border-color);
+            transition: transform var(--transition-fast);
+            cursor: zoom-in;
+        }
+        .modal-body img:hover {
+            transform: scale(1.02);
         }
         .modal-meta {
             display: flex;
@@ -1494,14 +1801,14 @@
             color: var(--text-muted);
         }
 
-        /* ==================== IMAGE VIEWER (Fullscreen) ==================== */
+        /* ==================== IMAGE VIEWER ==================== */
         .image-viewer {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.92);
             z-index: 3000;
             display: none;
             align-items: center;
@@ -1511,18 +1818,19 @@
         }
         .image-viewer.show {
             display: flex;
+            animation: fadeInOverlay 0.4s ease;
         }
         .image-viewer img {
             max-width: 95%;
             max-height: 95%;
             object-fit: contain;
             border-radius: 8px;
-            box-shadow: 0 0 60px rgba(124, 58, 237, 0.3);
-            animation: zoomInImage 0.3s ease;
+            box-shadow: 0 0 80px rgba(124, 58, 237, 0.3);
+            animation: zoomInImage 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         @keyframes zoomInImage {
             from {
-                transform: scale(0.8);
+                transform: scale(0.7);
                 opacity: 0;
             }
             to {
@@ -1536,8 +1844,8 @@
             right: 20px;
             width: 48px;
             height: 48px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             color: white;
             font-size: 1.5rem;
@@ -1549,31 +1857,7 @@
         }
         .image-viewer-close:hover {
             background: var(--purple-primary);
-            transform: rotate(90deg);
-        }
-
-        /* ==================== UPLOAD BUTTON (kept for style, but removed from UI) ==================== */
-        .upload-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--purple-glass);
-            border: 1px dashed var(--purple-light);
-            border-radius: var(--radius-sm);
-            padding: 8px 16px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--purple-primary);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-        .upload-btn:hover {
-            background: var(--purple-primary);
-            color: white;
-            border-color: var(--purple-primary);
-        }
-        .upload-btn input[type="file"] {
-            display: none;
+            transform: rotate(90deg) scale(1.1);
         }
 
         /* ==================== PRINT CSS ==================== */
@@ -1606,6 +1890,8 @@
                 padding: 20px 40px;
                 animation: none !important;
                 max-width: 100%;
+                opacity: 1 !important;
+                transform: none !important;
             }
             .page:last-child {
                 page-break-after: avoid;
@@ -1619,8 +1905,7 @@
             .stat-card,
             .timeline-card,
             .cert-card,
-            .project-card,
-            .achievement-item {
+            .project-card {
                 box-shadow: none !important;
                 border: 1px solid #ddd !important;
                 background: white !important;
@@ -1638,6 +1923,10 @@
             .modal-overlay,
             .image-viewer {
                 display: none !important;
+            }
+            .animate-on-scroll {
+                opacity: 1 !important;
+                transform: none !important;
             }
         }
 
@@ -1749,26 +2038,11 @@
                 padding: 20px;
                 max-height: 80vh;
             }
-            .achievement-highlight {
-                padding: 20px;
-            }
-            .achievement-highlight .ach-title {
-                font-size: 1.2rem;
-            }
             .contact-title {
                 font-size: 2rem;
             }
             .stat-card .stat-value {
                 font-size: 1.5rem;
-            }
-            .timeline {
-                padding-left: 20px;
-                margin-left: 5px;
-            }
-            .timeline-dot {
-                left: -28px;
-                width: 10px;
-                height: 10px;
             }
             .skill-name {
                 min-width: 80px;
@@ -1776,6 +2050,9 @@
             }
             .sidebar-logo {
                 font-size: 1.3rem;
+            }
+            .page-title::after {
+                width: 30%;
             }
         }
 
@@ -1815,9 +2092,6 @@
             .profile-photo {
                 width: 110px;
                 height: 110px;
-            }
-            .timeline-card {
-                padding: 14px 16px;
             }
             .nav-home-btn {
                 font-size: 0.65rem;
@@ -1883,6 +2157,22 @@
             font-size: 0.8rem;
             font-weight: 600;
         }
+
+        /* ==================== RIPPLE EFFECT ==================== */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            animation: rippleAnim 0.8s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes rippleAnim {
+            to {
+                transform: scale(6);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1896,7 +2186,10 @@
     </div>
 
     <!-- ==================== PAGE INDICATOR ==================== -->
-    <div class="page-indicator" id="pageIndicator" aria-live="polite">01 / 10</div>
+    <div class="page-indicator" id="pageIndicator" aria-live="polite">
+        <span class="indicator-dot"></span>
+        <span id="indicatorText">1 / 8</span>
+    </div>
 
     <!-- ==================== MOBILE NAV TOGGLE ==================== -->
     <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="สลับเมนูนำทาง" aria-expanded="false">
@@ -1929,7 +2222,7 @@
     <main class="main-content" id="mainContent">
         <div class="pages-container" id="pagesContainer">
 
-            <!-- ==================== PAGE 01: COVER ==================== -->
+            <!-- ==================== PAGE 1: COVER ==================== -->
             <section class="page active" id="page-01" data-page="1" aria-label="หน้าปก">
                 <div class="cover-page">
                     <div class="cover-info">
@@ -1954,12 +2247,12 @@
                 </div>
             </section>
 
-            <!-- ==================== PAGE 02: PROFILE ==================== -->
+            <!-- ==================== PAGE 2: PROFILE ==================== -->
             <section class="page" id="page-02" data-page="2" aria-label="ข้อมูลส่วนตัว">
-                <h2 class="page-title">ABOUT ME</h2>
-                <p class="page-subtitle">Profile & Personal Information</p>
+                <h2 class="page-title animate-on-scroll visible">ABOUT ME</h2>
+                <p class="page-subtitle animate-on-scroll visible">Profile & Personal Information</p>
                 <div class="profile-grid">
-                    <div class="profile-photo-card glass-card">
+                    <div class="profile-photo-card glass-card animate-on-scroll visible">
                         <img src="" alt="รูปโปรไฟล์" class="profile-photo" id="profilePhotoLarge" loading="lazy">
                         <div class="tags-list" id="profileTags">
                             <!-- Special abilities & hobbies injected -->
@@ -1969,7 +2262,7 @@
                         <!-- Profile info rows injected by JS -->
                     </div>
                 </div>
-                <div class="mt-3">
+                <div class="mt-3 animate-on-scroll visible">
                     <h3 class="section-heading">Social Media</h3>
                     <div class="social-icons-row" id="socialIconsRow">
                         <!-- Social icons injected by JS -->
@@ -1977,28 +2270,28 @@
                 </div>
             </section>
 
-            <!-- ==================== PAGE 03: STATEMENT ==================== -->
+            <!-- ==================== PAGE 3: STATEMENT ==================== -->
             <section class="page" id="page-03" data-page="3" aria-label="Statement of Purpose">
-                <h2 class="page-title">MY STATEMENT</h2>
-                <p class="page-subtitle">Statement of Purpose</p>
-                <div class="glass-card">
+                <h2 class="page-title animate-on-scroll visible">MY STATEMENT</h2>
+                <p class="page-subtitle animate-on-scroll visible">Statement of Purpose</p>
+                <div class="glass-card animate-on-scroll visible">
                     <div id="statementContent">
                         <!-- Statement content injected by JS -->
                     </div>
                 </div>
             </section>
 
-            <!-- ==================== PAGE 04: EDUCATION ==================== -->
+            <!-- ==================== PAGE 4: EDUCATION ==================== -->
             <section class="page" id="page-04" data-page="4" aria-label="การศึกษา">
-                <h2 class="page-title">EDUCATION</h2>
-                <p class="page-subtitle">Academic Background</p>
+                <h2 class="page-title animate-on-scroll visible">EDUCATION</h2>
+                <p class="page-subtitle animate-on-scroll visible">Academic Background</p>
                 <div class="education-stats" id="educationStats">
                     <!-- Stat cards injected by JS -->
                 </div>
-                <div class="chart-container" id="gpaChartContainer">
+                <div class="chart-container animate-on-scroll visible" id="gpaChartContainer">
                     <canvas id="gpaChart" aria-label="กราฟผลการเรียน"></canvas>
                 </div>
-                <div class="student-status-doc mt-3">
+                <div class="student-status-doc mt-3 animate-on-scroll visible">
                     <h3 class="section-heading">Certification of Student Status (ปพ.7)</h3>
                     <img src="" alt="เอกสาร ปพ.7" id="studentStatusDocImage" loading="lazy" style="display:none; cursor:pointer;" title="คลิกเพื่อดูภาพขนาดใหญ่">
                     <div id="studentStatusPlaceholder" class="img-placeholder" style="max-width:300px;height:200px;margin:0 auto;border-radius:12px;">
@@ -2007,33 +2300,21 @@
                 </div>
             </section>
 
-            <!-- ==================== PAGE 05: SKILLS ==================== -->
+            <!-- ==================== PAGE 5: SKILLS ==================== -->
             <section class="page" id="page-05" data-page="5" aria-label="ทักษะ">
-                <h2 class="page-title">MY SKILLS</h2>
-                <p class="page-subtitle">What I Can Do</p>
+                <h2 class="page-title animate-on-scroll visible">MY SKILLS</h2>
+                <p class="page-subtitle animate-on-scroll visible">What I Can Do</p>
                 <div id="skillsContent">
                     <!-- Skills content injected by JS -->
                 </div>
             </section>
 
-            <!-- ==================== PAGE 06: ACTIVITIES ==================== -->
-            <section class="page" id="page-06" data-page="6" aria-label="กิจกรรม">
-                <h2 class="page-title">ACTIVITIES</h2>
-                <p class="page-subtitle">My Journey & Experiences</p>
-                <div class="filter-buttons" id="activityFilters">
-                    <!-- Filter buttons injected by JS -->
-                </div>
-                <div class="timeline" id="activityTimeline">
-                    <!-- Timeline items injected by JS -->
-                </div>
-            </section>
-
-            <!-- ==================== PAGE 07: CERTIFICATES ==================== -->
-            <section class="page" id="page-07" data-page="7" aria-label="เกียรติบัตร">
-                <h2 class="page-title">CERTIFICATES</h2>
-                <p class="page-subtitle">My Awards & Recognition</p>
-                <input type="text" class="cert-search-input" id="certSearchInput" placeholder="🔍 ค้นหาเกียรติบัตร..." aria-label="ค้นหาเกียรติบัตร">
-                <div class="filter-buttons" id="certFilters">
+            <!-- ==================== PAGE 6: CERTIFICATES ==================== -->
+            <section class="page" id="page-06" data-page="6" aria-label="เกียรติบัตร">
+                <h2 class="page-title animate-on-scroll visible">CERTIFICATES</h2>
+                <p class="page-subtitle animate-on-scroll visible">My Awards & Recognition</p>
+                <input type="text" class="cert-search-input animate-on-scroll visible" id="certSearchInput" placeholder="🔍 ค้นหาเกียรติบัตร..." aria-label="ค้นหาเกียรติบัตร">
+                <div class="filter-buttons animate-on-scroll visible" id="certFilters">
                     <!-- Filter buttons injected by JS -->
                 </div>
                 <div class="cert-grid" id="certGrid">
@@ -2041,11 +2322,11 @@
                 </div>
             </section>
 
-            <!-- ==================== PAGE 08: PROJECTS ==================== -->
-            <section class="page" id="page-08" data-page="8" aria-label="ผลงาน">
-                <h2 class="page-title">MY PROJECTS</h2>
-                <p class="page-subtitle">Portfolio & Works</p>
-                <div class="filter-buttons" id="projectFilters">
+            <!-- ==================== PAGE 7: PROJECTS ==================== -->
+            <section class="page" id="page-07" data-page="7" aria-label="ผลงาน">
+                <h2 class="page-title animate-on-scroll visible">MY PROJECTS</h2>
+                <p class="page-subtitle animate-on-scroll visible">Portfolio & Works</p>
+                <div class="filter-buttons animate-on-scroll visible" id="projectFilters">
                     <!-- Filter buttons injected by JS -->
                 </div>
                 <div class="project-grid" id="projectGrid">
@@ -2053,27 +2334,18 @@
                 </div>
             </section>
 
-            <!-- ==================== PAGE 09: ACHIEVEMENTS ==================== -->
-            <section class="page" id="page-09" data-page="9" aria-label="ความสำเร็จ">
-                <h2 class="page-title">ACHIEVEMENTS</h2>
-                <p class="page-subtitle">My Milestones</p>
-                <div id="achievementsContent">
-                    <!-- Achievement content injected by JS -->
-                </div>
-            </section>
-
-            <!-- ==================== PAGE 10: CONTACT ==================== -->
-            <section class="page" id="page-10" data-page="10" aria-label="ติดต่อ">
+            <!-- ==================== PAGE 8: CONTACT ==================== -->
+            <section class="page" id="page-08" data-page="8" aria-label="ติดต่อ">
                 <div class="contact-content">
-                    <h2 class="contact-title">THANK YOU</h2>
-                    <p class="contact-subtitle">Thank you for exploring my portfolio</p>
-                    <div class="contact-info-grid" id="contactInfoGrid">
+                    <h2 class="contact-title animate-on-scroll visible">THANK YOU</h2>
+                    <p class="contact-subtitle animate-on-scroll visible">Thank you for exploring my portfolio</p>
+                    <div class="contact-info-grid animate-on-scroll visible" id="contactInfoGrid">
                         <!-- Contact info pills injected by JS -->
                     </div>
-                    <div class="social-icons-row flex-center mt-3" id="contactSocialIcons">
+                    <div class="social-icons-row flex-center mt-3 animate-on-scroll visible" id="contactSocialIcons">
                         <!-- Social icons injected -->
                     </div>
-                    <button class="btn-primary mt-4" id="backToCoverBtn" aria-label="กลับไปหน้าปก">
+                    <button class="btn-primary mt-4 animate-on-scroll visible" id="backToCoverBtn" aria-label="กลับไปหน้าปก">
                         <i class="fas fa-arrow-left"></i> BACK TO COVER
                     </button>
                 </div>
@@ -2124,7 +2396,7 @@
                 bio: "นักเรียนผู้สนใจด้านเทคโนโลยีและการออกแบบ มุ่งมั่นพัฒนาทักษะการเขียนโปรแกรมและการสร้างสรรค์สื่อดิจิทัล",
                 specialAbilities: ["การเขียนโปรแกรม", "ออกแบบ UI/UX", "ตัดต่อวิดีโอ"],
                 hobbies: ["เล่นเกม", "เล่นฟังเพลง", "ถ่ายภาพ", ""],
-                profileImage: "" // Base64 image data goes here
+                profileImage: "img/E485E77C-DE6C-4AE8-A41B-5EDAB24E2200.jpg" // ใช้ URL แทน base64
             },
             education: {
                 gpax: "3.85",
@@ -2140,7 +2412,7 @@
                     { term: "ม.5 เทอม 2", gpa: 3.91 },
                     { term: "ม.6 เทอม 1", gpa: 3.85 }
                 ],
-                studentStatusDoc: "" // Base64 image of ปพ.7
+                studentStatusDoc: "" // ใช้ URL หรือค่าว่าง
             },
             skills: {
                 technology: [
@@ -2176,38 +2448,37 @@
                 future: "ในอนาคต ผมอยากทำงานในสาย Full-Stack Development หรือ UI/UX Design เพื่อสร้างประสบการณ์ดิจิทัลที่ยอดเยี่ยมให้กับผู้ใช้ ผมเชื่อว่าการผสมผสานระหว่างทักษะด้านเทคนิคและความคิดสร้างสรรค์จะช่วยให้ผมสร้างสิ่งที่มีคุณค่าและยั่งยืนได้"
             },
             activities: [
-                { year: "2567", name: "โครงการแข่งขันพัฒนาเว็บไซต์ระดับประเทศ", role: "หัวหน้าทีม", location: "กรุงเทพฯ",
-                    category: "Competition", description: "นำทีม 3 คนพัฒนาเว็บไซต์เพื่อการศึกษาที่ได้รับรางวัลรองชนะเลิศอันดับ 2",
-                    learning: "ได้เรียนรู้การทำงานเป็นทีม การบริหารเวลา และการแก้ไขปัญหาเฉพาะหน้า",
-                    image: "" },
-                { year: "2567", name: "ค่ายอบรมการเขียนโปรแกรม", role: "ผู้เข้าอบรม", location: "มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี",
-                    category: "Camp", description: "เข้าร่วมค่ายเรียนรู้การพัฒนาเว็บแอปพลิเคชันด้วย JavaScript และ Node.js",
-                    learning: "ได้เรียนรู้เทคโนโลยีใหม่ ๆ และได้แลกเปลี่ยนประสบการณ์กับเพื่อนจากโรงเรียนอื่น",
-                    image: "" },
-                { year: "2566", name: "กิจกรรมจิตอาสาสอนน้องใช้คอมพิวเตอร์", role: "อาสาสมัคร", location: "โรงเรียนประถมในชุมชน",
-                    category: "Volunteer", description: "สอนนักเรียนประถมใช้โปรแกรมพื้นฐานและการใช้งานอินเทอร์เน็ตอย่างปลอดภัย",
-                    learning: "ได้พัฒนาทักษะการสื่อสารและการถ่ายทอดความรู้ให้ผู้อื่นเข้าใจได้ง่าย",
-                    image: "" },
-                { year: "2566", name: "แข่งขันตอบปัญหาทางวิชาการ", role: "ตัวแทนโรงเรียน", location: "มหาวิทยาลัยเกษตรศาสตร์",
-                    category: "Academic", description: "เข้าร่วมการแข่งขันตอบปัญหาด้านคอมพิวเตอร์และเทคโนโลยี",
-                    learning: "ได้ฝึกการคิดวิเคราะห์อย่างเป็นระบบและการทำงานภายใต้ความกดดัน",
-                    image: "" },
-                { year: "2565", name: "ชมรมคอมพิวเตอร์โรงเรียน", role: "สมาชิกชมรม", location: "โรงเรียน",
-                    category: "School Activity", description: "เข้าร่วมกิจกรรมชมรมคอมพิวเตอร์ เรียนรู้การเขียนโปรแกรมเบื้องต้นและสร้างโปรเจกต์ขนาดเล็ก",
-                    learning: "เริ่มต้นเรียนรู้การเขียนโปรแกรมอย่างเป็นระบบและค้นพบความหลงใหลในเทคโนโลยี",
-                    image: "" }
+                // Kept for data integrity but page removed
             ],
             certificates: [
-                { name: "การแข่งขันพัฒนาเว็บไซต์ระดับประเทศ", org: "สสวท.", year: "2567",
-                    category: "Competition", image: "" },
-                { name: "ค่ายเขียนโปรแกรม JavaScript", org: "มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี", year: "2567",
-                    category: "Workshop", image: "" },
-                { name: "เกียรติบัตรจิตอาสา", org: "โรงเรียน", year: "2566", category: "Volunteer",
-                    image: "" },
-                { name: "ผ่านการอบรม Python เบื้องต้น", org: "Coding Thailand", year: "2566", category: "Technology",
-                    image: "" },
-                { name: "แข่งขันตอบปัญหาวิทยาการคอมพิวเตอร์", org: "มหาวิทยาลัยเกษตรศาสตร์", year: "2566",
-                    category: "Academic", image: "" }
+                {
+                    name: "รางวัลรองชนะเลิศ อันดับที่ 1 การแข่งขันสร้างเกม Roblox ระดับ ม.ปลาย",
+                    org: "มูลนิธิแห่งสภาคีรสตจักร์ในประเทศไทย",
+                    year: "2567",
+                    category: "Competition",
+                    image: "img\\roblox.png" // ใช้ URL
+                },
+                {
+                    name: "ละครวันภาษาไทย (บริษัทกากินเทคชาติดี)",
+                    org: "มูลนิธิแห่งสภาคีเครดิตจักรในประเทศไทย",
+                    year: "2567",
+                    category: "Academic",
+                    image: "img\\ละคร.png"
+                },
+                {
+                    name: "กิจกรรมจิตอาสา 'รวมพลังศาสนิกสัมพันธ์บ้านพี่ญาสาธารณประโยชน์'",
+                    org: "คณะกรรมการศาสนิกสัมพันธ์จังหวัดเพชรบุรี ร่วมกับสำนักงานวัฒนธรรมจังหวัดเพชรบุรี",
+                    year: "2568",
+                    category: "Volunteer",
+                    image: "img\\จิตอาสา.png"
+                },
+                {
+                    name: "เข้าร่วมกิจกรรมวันวิทยาศาสตร์และเทคโนโลยี",
+                    org: "โรงเรียนอรุณประดิษฐ์",
+                    year: "2565",
+                    category: "Academic",
+                    image: "img\\sci.png"
+                }
             ],
             projects: [
                 { name: "เว็บไซต์ระบบจัดการร้านอาหาร", year: "2567", category: "WEB",
@@ -2215,49 +2486,39 @@
                     description: "พัฒนาเว็บแอปพลิเคชันสำหรับจัดการร้านอาหาร ระบบคิดเงิน สต็อก และรายงานยอดขายแบบเรียลไทม์",
                     responsibility: "รับผิดชอบการออกแบบ UI/UX และพัฒนาระบบ Frontend ทั้งหมด",
                     learning: "ได้เรียนรู้การออกแบบระบบที่ซับซ้อน การจัดการ State และการเชื่อมต่อกับฐานข้อมูล",
-                    link: "https://github.com/example/restaurant-app", github: "https://github.com/example/restaurant-app",
-                    image: "" },
+                    link: "https://github.com/example/restaurant-app",
+                    github: "https://github.com/example/restaurant-app",
+                    image: ""
+                },
                 { name: "แอปพลิเคชันบันทึกการเรียน", year: "2567", category: "APP",
                     technology: ["Python", "SQLite", "Tkinter"],
                     description: "พัฒนาแอปพลิเคชันบันทึกการเรียน ตารางสอบ และเกรดสำหรับนักเรียน",
                     responsibility: "ออกแบบและพัฒนาระบบทั้งหมดด้วยตนเอง",
                     learning: "ได้เรียนรู้การออกแบบฐานข้อมูลและการพัฒนาโปรแกรมที่มีการใช้งานจริง",
-                    link: "", github: "https://github.com/example/study-tracker", image: "" },
+                    link: "", github: "https://github.com/example/study-tracker", image: ""
+                },
                 { name: "UI/UX Design โมบายแอปสุขภาพ", year: "2566", category: "UI/UX",
                     technology: ["Figma", "Adobe XD"],
                     description: "ออกแบบ UI/UX สำหรับแอปพลิเคชันติดตามสุขภาพ เน้นการใช้งานง่ายและเข้าถึงได้",
                     responsibility: "รับผิดชอบงานออกแบบทั้งหมด ตั้งแต่ User Research จนถึง Prototype",
                     learning: "ได้เรียนรู้กระบวนการออกแบบโดยยึดผู้ใช้เป็นศูนย์กลาง และการทำ Usability Testing",
-                    link: "", github: "", image: "" },
+                    link: "", github: "", image: ""
+                },
                 { name: "เว็บไซต์ Portfolio ส่วนตัว", year: "2566", category: "WEB",
                     technology: ["HTML", "CSS", "JavaScript"],
                     description: "สร้างเว็บไซต์ Portfolio แรกของตนเองเพื่อแสดงผลงานและทักษะ",
                     responsibility: "ออกแบบและพัฒนาเว็บไซต์ทั้งหมด",
                     learning: "เริ่มต้นเรียนรู้การทำ Responsive Design และการออกแบบที่คำนึงถึงผู้ใช้",
-                    link: "", github: "https://github.com/example/portfolio", image: "" }
+                    link: "", github: "https://github.com/example/portfolio", image: ""
+                }
             ],
             achievements: [
-                { year: "2567", title: "รางวัลรองชนะเลิศอันดับ 2 การแข่งขันพัฒนาเว็บไซต์ระดับประเทศ",
-                    description: "จากการแข่งขันที่จัดโดย สสวท. มีผู้เข้าร่วมกว่า 200 ทีมจากทั่วประเทศ",
-                    type: "Competition", highlight: true },
-                { year: "2567", title: "ตัวแทนโรงเรียนเข้าร่วมค่ายเทคโนโลยีระดับประเทศ",
-                    description: "ได้รับการคัดเลือกเป็น 1 ใน 50 คนจากทั่วประเทศ",
-                    type: "Leadership", highlight: false },
-                { year: "2566", title: "รางวัลชนะเลิศการแข่งขันตอบปัญหาทางวิชาการ",
-                    description: "การแข่งขันระดับภาค จัดโดยมหาวิทยาลัยเกษตรศาสตร์",
-                    type: "Academic", highlight: false },
-                { year: "2566", title: "ประธานชมรมคอมพิวเตอร์",
-                    description: "บริหารทีม 20 คน จัดกิจกรรมอบรมและแข่งขันภายในโรงเรียน",
-                    type: "Leadership", highlight: false },
-                { year: "2565", title: "เริ่มต้นเส้นทางการเขียนโปรแกรม",
-                    description: "เริ่มเรียนรู้ HTML/CSS และสร้างเว็บไซต์แรกของตัวเอง",
-                    type: "Other", highlight: false }
+                // Kept for data integrity but page removed
             ],
             social: {
                 facebook: "https://www.facebook.com/minna.chansaeng",
                 instagram: "https://instagram.com/clash_tooru",
                 github: "https://github.com/zeronatood",
-                
             }
         };
 
@@ -2302,9 +2563,8 @@
         // ============================================================
         const state = {
             currentPage: 1,
-            totalPages: 10,
+            totalPages: 8,
             theme: localStorage.getItem('portfolio_theme') || 'light',
-            activityFilter: 'ALL',
             certFilter: 'ALL',
             certSearchTerm: '',
             projectFilter: 'ALL',
@@ -2318,11 +2578,9 @@
             3: 'Statement',
             4: 'Education',
             5: 'Skills',
-            6: 'Activities',
-            7: 'Certificates',
-            8: 'Projects',
-            9: 'Achievements',
-            10: 'Contact'
+            6: 'Certificates',
+            7: 'Projects',
+            8: 'Contact'
         };
 
         let gpaChartInstance = null;
@@ -2332,14 +2590,9 @@
         // ============================================================
         function getEl(id) { return document.getElementById(id); }
 
-        function getBase64Image(dataUrl) {
-            if (!dataUrl) return '';
-            if (dataUrl.startsWith('data:image')) return dataUrl;
-            return '';
-        }
-
-        function isValidBase64Image(str) {
-            return typeof str === 'string' && str.startsWith('data:image');
+        // ============ ฟังก์ชันเช็คว่ามีรูปหรือไม่ (แทนที่ isValidBase64Image) ============
+        function hasImage(src) {
+            return typeof src === 'string' && src.trim() !== '';
         }
 
         function escapeHtml(text) {
@@ -2381,7 +2634,7 @@
         }
 
         // ============================================================
-        // FIREBASE FUNCTIONS (Optional — site works without it)
+        // FIREBASE FUNCTIONS (Optional)
         // ============================================================
         async function saveData(collectionName, docId, data) {
             if (!firebaseReady || !firestoreDB) {
@@ -2414,87 +2667,6 @@
                 console.warn('[Firebase] Load failed:', err.message);
                 return { success: false, data: null, reason: err.message };
             }
-        }
-
-        async function uploadImage(path, base64Data) {
-            if (!firebaseReady || !firebaseStorage || !base64Data) {
-                return { success: false, reason: 'firebase-not-ready' };
-            }
-            try {
-                const storageRef = firebaseStorage.ref(path);
-                await storageRef.putString(base64Data, 'data_url');
-                const url = await storageRef.getDownloadURL();
-                return { success: true, url };
-            } catch (err) {
-                console.warn('[Firebase] Upload failed:', err.message);
-                return { success: false, reason: err.message };
-            }
-        }
-
-        async function deleteImage(path) {
-            if (!firebaseReady || !firebaseStorage) {
-                return { success: false, reason: 'firebase-not-ready' };
-            }
-            try {
-                const storageRef = firebaseStorage.ref(path);
-                await storageRef.delete();
-                return { success: true };
-            } catch (err) {
-                console.warn('[Firebase] Delete failed:', err.message);
-                return { success: false, reason: err.message };
-            }
-        }
-
-        // ============================================================
-        // IMAGE SYSTEM (Base64) — upload functions removed
-        // ============================================================
-        function imageToBase64(file, maxWidth = 800, maxHeight = 800, quality = 0.8) {
-            return new Promise((resolve, reject) => {
-                if (!file) {
-                    reject(new Error('No file provided'));
-                    return;
-                }
-                if (!file.type.startsWith('image/')) {
-                    reject(new Error('Not an image file'));
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        let width = img.width;
-                        let height = img.height;
-                        if (width > maxWidth) {
-                            height = height * (maxWidth / width);
-                            width = maxWidth;
-                        }
-                        if (height > maxHeight) {
-                            width = width * (maxHeight / height);
-                            height = maxHeight;
-                        }
-                        const canvas = document.createElement('canvas');
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        const base64 = canvas.toDataURL(file.type || 'image/jpeg', quality);
-                        resolve(base64);
-                    };
-                    img.onerror = function() {
-                        reject(new Error('Failed to load image'));
-                    };
-                    img.src = e.target.result;
-                };
-                reader.onerror = function() {
-                    reject(new Error('Failed to read file'));
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function base64ToImage(base64Data) {
-            if (!isValidBase64Image(base64Data)) return '';
-            return base64Data;
         }
 
         // ============================================================
@@ -2542,17 +2714,18 @@
             }
 
             initParticles() {
-                const count = Math.min(60, Math.floor(window.innerWidth / 25));
+                const count = Math.min(65, Math.floor(window.innerWidth / 22));
                 this.particles = [];
                 for (let i = 0; i < count; i++) {
                     this.particles.push({
                         x: Math.random() * this.width,
                         y: Math.random() * this.height,
-                        vx: (Math.random() - 0.5) * 0.4,
-                        vy: (Math.random() - 0.5) * 0.4,
-                        radius: Math.random() * 3 + 1,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: (Math.random() - 0.5) * 0.5,
+                        radius: Math.random() * 3.5 + 1,
                         alpha: Math.random() * 0.5 + 0.2,
-                        pulse: Math.random() * Math.PI * 2
+                        pulse: Math.random() * Math.PI * 2,
+                        phase: Math.random() * Math.PI * 2
                     });
                 }
             }
@@ -2576,36 +2749,49 @@
                 const baseColor = this.isDark ? '124, 58, 237' : '167, 139, 250';
 
                 this.particles.forEach(p => {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.pulse += 0.02;
+                    p.x += p.vx + Math.sin(p.phase + Date.now() * 0.0005) * 0.08;
+                    p.y += p.vy + Math.cos(p.phase + Date.now() * 0.0005) * 0.08;
+                    p.pulse += 0.025;
+                    p.phase += 0.01;
 
-                    if (p.x < -10) p.x = this.width + 10;
-                    if (p.x > this.width + 10) p.x = -10;
-                    if (p.y < -10) p.y = this.height + 10;
-                    if (p.y > this.height + 10) p.y = -10;
+                    if (p.x < -20) p.x = this.width + 20;
+                    if (p.x > this.width + 20) p.x = -20;
+                    if (p.y < -20) p.y = this.height + 20;
+                    if (p.y > this.height + 20) p.y = -20;
 
                     const dx = p.x - this.mouseX;
                     const dy = p.y - this.mouseY;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    const mouseInfluence = Math.max(0, 1 - dist / 150) * 0.8;
+                    const mouseInfluence = Math.max(0, 1 - dist / 160) * 0.7;
 
-                    p.x += dx * mouseInfluence * 0.01;
-                    p.y += dy * mouseInfluence * 0.01;
+                    p.x += dx * mouseInfluence * 0.012;
+                    p.y += dy * mouseInfluence * 0.012;
 
-                    const currentAlpha = p.alpha * (0.7 + Math.sin(p.pulse) * 0.3);
+                    const currentAlpha = p.alpha * (0.6 + Math.sin(p.pulse) * 0.4);
+                    const size = p.radius * (0.9 + Math.sin(p.pulse * 0.7) * 0.15);
 
+                    // Glow
+                    const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, size * 4);
+                    grad.addColorStop(0, `rgba(${baseColor}, ${currentAlpha * 0.6})`);
+                    grad.addColorStop(1, `rgba(${baseColor}, 0)`);
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(${baseColor}, ${currentAlpha * 0.5})`;
+                    ctx.arc(p.x, p.y, size * 4, 0, Math.PI * 2);
+                    ctx.fillStyle = grad;
+                    ctx.fill();
+
+                    // Core
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${baseColor}, ${currentAlpha * 0.7})`;
                     ctx.fill();
 
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.radius * 2, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(${baseColor}, ${currentAlpha * 0.1})`;
+                    ctx.arc(p.x, p.y, size * 0.4, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha * 0.3})`;
                     ctx.fill();
                 });
 
+                // Connections
                 for (let i = 0; i < this.particles.length; i++) {
                     for (let j = i + 1; j < this.particles.length; j++) {
                         const p1 = this.particles[i];
@@ -2613,13 +2799,13 @@
                         const dx = p1.x - p2.x;
                         const dy = p1.y - p2.y;
                         const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < 120) {
-                            const alpha = (1 - dist / 120) * 0.15;
+                        if (dist < 130) {
+                            const alpha = (1 - dist / 130) * 0.18;
                             ctx.beginPath();
                             ctx.moveTo(p1.x, p1.y);
                             ctx.lineTo(p2.x, p2.y);
                             ctx.strokeStyle = `rgba(${baseColor}, ${alpha})`;
-                            ctx.lineWidth = 0.5;
+                            ctx.lineWidth = 0.6;
                             ctx.stroke();
                         }
                     }
@@ -2627,6 +2813,24 @@
 
                 requestAnimationFrame(() => this.animate());
             }
+        }
+
+        // ============================================================
+        // RIPPLE EFFECT
+        // ============================================================
+        function createRipple(e, element) {
+            const rect = element.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            const size = Math.max(rect.width, rect.height) * 0.4;
+            ripple.style.width = size + 'px';
+            ripple.style.height = size + 'px';
+            element.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 800);
         }
 
         // ============================================================
@@ -2642,7 +2846,8 @@
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
-            const targetPage = getEl(`page-${String(pageNumber).padStart(2, '0')}`);
+            const pageId = `page-${String(pageNumber).padStart(2, '0')}`;
+            const targetPage = getEl(pageId);
             if (targetPage) {
                 targetPage.classList.add('active');
                 targetPage.style.animation = 'none';
@@ -2657,8 +2862,10 @@
             const progress = (pageNumber / state.totalPages) * 100;
             getEl('progressBarFill').style.width = progress + '%';
 
-            getEl('pageIndicator').textContent =
-                `${String(pageNumber).padStart(2, '0')} / ${String(state.totalPages).padStart(2, '0')}`;
+            const indicatorText = getEl('indicatorText');
+            if (indicatorText) {
+                indicatorText.textContent = `${pageNumber} / ${state.totalPages}`;
+            }
 
             getEl('prevPageBtn').disabled = pageNumber === 1;
             getEl('nextPageBtn').disabled = pageNumber === state.totalPages;
@@ -2671,8 +2878,10 @@
             }
 
             if (pageNumber === 4) {
-                setTimeout(() => renderGPAChart(), 300);
+                setTimeout(() => renderGPAChart(), 350);
             }
+
+            setTimeout(() => observeScrollElements(), 400);
         }
 
         function goToNextPage() {
@@ -2731,6 +2940,32 @@
         }
 
         // ============================================================
+        // SCROLL ANIMATION (Intersection Observer)
+        // ============================================================
+        let scrollObserver = null;
+
+        function observeScrollElements() {
+            if (scrollObserver) {
+                scrollObserver.disconnect();
+            }
+            const elements = document.querySelectorAll('.animate-on-scroll:not(.visible)');
+            if (elements.length === 0) return;
+
+            scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -40px 0px'
+            });
+
+            elements.forEach(el => scrollObserver.observe(el));
+        }
+
+        // ============================================================
         // PAGE RENDERING
         // ============================================================
         function renderCoverPage() {
@@ -2740,11 +2975,11 @@
             getEl('coverProgram').textContent = 'Computer Science / IT / Communication Arts';
 
             const img = getEl('coverProfileImage');
-            if (isValidBase64Image(d.profile.profileImage)) {
+            if (hasImage(d.profile.profileImage)) {
                 img.src = d.profile.profileImage;
                 img.alt = `รูปโปรไฟล์ ${d.profile.name}`;
             } else {
-                img.src = "img\\E485E77C-DE6C-4AE8-A41B-5EDAB24E2200.jpg";
+                img.src = '';
                 img.alt = '';
                 img.style.background = 'var(--purple-glass)';
             }
@@ -2755,11 +2990,11 @@
             const p = d.profile;
 
             const photoLarge = getEl('profilePhotoLarge');
-            if (isValidBase64Image(p.profileImage)) {
+            if (hasImage(p.profileImage)) {
                 photoLarge.src = p.profileImage;
                 photoLarge.alt = `รูปโปรไฟล์ ${p.name}`;
             } else {
-                photoLarge.src = "img\\E485E77C-DE6C-4AE8-A41B-5EDAB24E2200.jpg";
+                photoLarge.src = '';
                 photoLarge.alt = '';
                 photoLarge.style.background = 'var(--purple-glass)';
             }
@@ -2776,11 +3011,11 @@
                 { label: 'โทรศัพท์', value: formatPhone(p.phone) },
             ];
             infoList.innerHTML = infoItems.map(item => `
-                <div class="profile-info-row">
-                    <span class="label">${escapeHtml(item.label)}</span>
-                    <span class="value">${escapeHtml(item.value)}</span>
-                </div>
-            `).join('');
+                    <div class="profile-info-row animate-on-scroll visible">
+                        <span class="label">${escapeHtml(item.label)}</span>
+                        <span class="value">${escapeHtml(item.value)}</span>
+                    </div>
+                `).join('');
 
             const tagsContainer = getEl('profileTags');
             const allTags = [...p.specialAbilities, ...p.hobbies];
@@ -2789,7 +3024,6 @@
             renderSocialIcons(getEl('socialIconsRow'), d.social);
         }
 
-        // Social icon mapping using Font Awesome
         const socialIconMap = {
             facebook: 'fab fa-facebook',
             instagram: 'fab fa-instagram',
@@ -2809,40 +3043,40 @@
             container.innerHTML = icons
                 .filter(item => item.url)
                 .map(item => `
-                    <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" 
-                       class="social-icon-link" aria-label="${item.label}" title="${item.label}">
-                        <i class="${socialIconMap[item.key]}"></i>
-                    </a>
-                `).join('');
+                        <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" 
+                           class="social-icon-link" aria-label="${item.label}" title="${item.label}">
+                            <i class="${socialIconMap[item.key]}"></i>
+                        </a>
+                    `).join('');
         }
 
         function renderStatementPage() {
             const s = portfolioData.statement;
             const content = `
-                <div class="statement-block">
-                    <h4>Introduction</h4>
-                    <p class="statement-text">${escapeHtml(s.introduction)}</p>
-                </div>
-                <div class="highlight-quote">
-                    ${escapeHtml(s.passion.split('.')[0])}.
-                </div>
-                <div class="statement-block">
-                    <h4>Why This Field</h4>
-                    <p class="statement-text">${escapeHtml(s.whyField)}</p>
-                </div>
-                <div class="statement-block">
-                    <h4>My Passion</h4>
-                    <p class="statement-text">${escapeHtml(s.passion)}</p>
-                </div>
-                <div class="statement-block">
-                    <h4>My Goal</h4>
-                    <p class="statement-text">${escapeHtml(s.goal)}</p>
-                </div>
-                <div class="statement-block">
-                    <h4>My Future</h4>
-                    <p class="statement-text">${escapeHtml(s.future)}</p>
-                </div>
-            `;
+                    <div class="statement-block animate-on-scroll visible">
+                        <h4>Introduction</h4>
+                        <p class="statement-text">${escapeHtml(s.introduction)}</p>
+                    </div>
+                    <div class="highlight-quote animate-on-scroll visible">
+                        ${escapeHtml(s.passion.split('.')[0])}.
+                    </div>
+                    <div class="statement-block animate-on-scroll visible">
+                        <h4>Why This Field</h4>
+                        <p class="statement-text">${escapeHtml(s.whyField)}</p>
+                    </div>
+                    <div class="statement-block animate-on-scroll visible">
+                        <h4>My Passion</h4>
+                        <p class="statement-text">${escapeHtml(s.passion)}</p>
+                    </div>
+                    <div class="statement-block animate-on-scroll visible">
+                        <h4>My Goal</h4>
+                        <p class="statement-text">${escapeHtml(s.goal)}</p>
+                    </div>
+                    <div class="statement-block animate-on-scroll visible">
+                        <h4>My Future</h4>
+                        <p class="statement-text">${escapeHtml(s.future)}</p>
+                    </div>
+                `;
             getEl('statementContent').innerHTML = content;
         }
 
@@ -2856,16 +3090,16 @@
                 { label: 'IELTS', value: e.ielts },
                 { label: 'ระดับชั้น', value: e.level },
             ];
-            statsContainer.innerHTML = stats.map(s => `
-                <div class="stat-card">
-                    <div class="stat-value">${escapeHtml(s.value)}</div>
-                    <div class="stat-label">${escapeHtml(s.label)}</div>
-                </div>
-            `).join('');
+            statsContainer.innerHTML = stats.map((s, idx) => `
+                    <div class="stat-card animate-on-scroll visible delay-${idx + 1}">
+                        <div class="stat-value">${escapeHtml(s.value)}</div>
+                        <div class="stat-label">${escapeHtml(s.label)}</div>
+                    </div>
+                `).join('');
 
             const docImg = getEl('studentStatusDocImage');
             const placeholder = getEl('studentStatusPlaceholder');
-            if (isValidBase64Image(e.studentStatusDoc)) {
+            if (hasImage(e.studentStatusDoc)) {
                 docImg.src = e.studentStatusDoc;
                 docImg.style.display = 'block';
                 docImg.alt = 'เอกสาร ปพ.7';
@@ -2877,12 +3111,12 @@
             }
 
             docImg.onclick = function() {
-                if (this.src && this.src.startsWith('data:image')) {
+                if (this.src && this.src.trim() !== '') {
                     openImageViewer(this.src);
                 }
             };
 
-            setTimeout(() => renderGPAChart(), 200);
+            setTimeout(() => renderGPAChart(), 300);
         }
 
         function renderGPAChart() {
@@ -2913,7 +3147,7 @@
                         pointBorderColor: isDark ? '#1A0F2E' : '#FFFFFF',
                         pointBorderWidth: 2,
                         pointRadius: 6,
-                        pointHoverRadius: 9,
+                        pointHoverRadius: 10,
                         borderWidth: 3,
                         fill: true,
                         tension: 0.4,
@@ -2975,68 +3209,20 @@
                 { title: 'Soft Skills', items: skills.softSkills, icon: '<i class="fas fa-handshake"></i>' },
             ];
 
-            container.innerHTML = categories.map(cat => `
-                <div class="skills-category glass-card">
-                    <h3>${cat.icon} ${cat.title}</h3>
-                    ${cat.items.map(skill => `
-                        <div class="skill-item">
-                            <span class="skill-name">${escapeHtml(skill.name)}</span>
-                            <div class="skill-bar-bg" role="progressbar" aria-valuenow="${skill.level}" aria-valuemin="0" aria-valuemax="100" aria-label="${escapeHtml(skill.name)}">
-                                <div class="skill-bar-fill" style="width: ${skill.level}%;"></div>
+            container.innerHTML = categories.map((cat, catIdx) => `
+                    <div class="skills-category glass-card animate-on-scroll visible delay-${catIdx + 1}">
+                        <h3>${cat.icon} ${cat.title}</h3>
+                        ${cat.items.map((skill, idx) => `
+                            <div class="skill-item" style="transition-delay: ${(catIdx * 5 + idx) * 30}ms">
+                                <span class="skill-name">${escapeHtml(skill.name)}</span>
+                                <div class="skill-bar-bg" role="progressbar" aria-valuenow="${skill.level}" aria-valuemin="0" aria-valuemax="100" aria-label="${escapeHtml(skill.name)}">
+                                    <div class="skill-bar-fill" style="width: ${skill.level}%;"></div>
+                                </div>
+                                <span class="skill-percent">${skill.level}%</span>
                             </div>
-                            <span class="skill-percent">${skill.level}%</span>
-                        </div>
-                    `).join('')}
-                </div>
-            `).join('');
-        }
-
-        function renderActivitiesPage() {
-            const activities = portfolioData.activities;
-            const container = getEl('activityTimeline');
-            const filterContainer = getEl('activityFilters');
-
-            const categories = ['ALL', ...new Set(activities.map(a => a.category))];
-
-            filterContainer.innerHTML = categories.map(cat => `
-                <button class="filter-btn ${state.activityFilter === cat ? 'active' : ''}" 
-                        data-filter="${escapeHtml(cat)}" aria-label="กรอง: ${escapeHtml(cat)}">
-                    ${escapeHtml(cat)}
-                </button>
-            `).join('');
-
-            const filtered = state.activityFilter === 'ALL' ?
-                activities :
-                activities.filter(a => a.category === state.activityFilter);
-
-            const sorted = [...filtered].sort((a, b) => parseInt(b.year) - parseInt(a.year));
-
-            container.innerHTML = sorted.map((activity, index) => `
-                <div class="timeline-item" data-index="${index}" data-activity='${JSON.stringify(activity)}'>
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-card">
-                        <div class="timeline-year"><i class="fas fa-calendar-alt"></i> ${escapeHtml(activity.year)}</div>
-                        <div class="timeline-title">${escapeHtml(activity.name)}</div>
-                        <div class="timeline-role">บทบาท: ${escapeHtml(activity.role)} | สถานที่: ${escapeHtml(activity.location)}</div>
-                        <div class="timeline-desc">${escapeHtml(activity.description)}</div>
-                        <span class="category-badge">${escapeHtml(activity.category)}</span>
+                        `).join('')}
                     </div>
-                </div>
-            `).join('');
-
-            container.querySelectorAll('.timeline-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const activityData = JSON.parse(this.dataset.activity);
-                    openActivityModal(activityData);
-                });
-            });
-
-            filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    state.activityFilter = this.dataset.filter;
-                    renderActivitiesPage();
-                });
-            });
+                `).join('');
         }
 
         function renderCertificatesPage() {
@@ -3047,11 +3233,11 @@
             const categories = ['ALL', ...new Set(certs.map(c => c.category))];
 
             filterContainer.innerHTML = categories.map(cat => `
-                <button class="filter-btn ${state.certFilter === cat ? 'active' : ''}" 
-                        data-filter="${escapeHtml(cat)}" aria-label="กรอง: ${escapeHtml(cat)}">
-                    ${escapeHtml(cat)}
-                </button>
-            `).join('');
+                    <button class="filter-btn ${state.certFilter === cat ? 'active' : ''}" 
+                            data-filter="${escapeHtml(cat)}" aria-label="กรอง: ${escapeHtml(cat)}">
+                        ${escapeHtml(cat)}
+                    </button>
+                `).join('');
 
             let filtered = certs;
             if (state.certFilter !== 'ALL') {
@@ -3070,17 +3256,17 @@
                 grid.innerHTML = '<p class="text-center mt-3" style="color:var(--text-muted);">ไม่พบเกียรติบัตรที่ค้นหา</p>';
             } else {
                 grid.innerHTML = filtered.map((cert, index) => `
-                    <div class="cert-card" data-index="${index}" data-cert='${JSON.stringify(cert)}'>
-                        ${isValidBase64Image(cert.image) ? 
-                            `<img src="${cert.image}" alt="${escapeHtml(cert.name)}" loading="lazy">` : 
-                            `<div class="img-placeholder" style="height:160px;">📜 ยังไม่มีรูป</div>`}
-                        <div class="cert-card-body">
-                            <div class="cert-card-name">${escapeHtml(cert.name)}</div>
-                            <div class="cert-card-org">${escapeHtml(cert.org)}</div>
-                            <div class="cert-card-year">${escapeHtml(cert.year)}</div>
+                        <div class="cert-card animate-on-scroll visible delay-${(index % 6) + 1}" data-index="${index}" data-cert='${JSON.stringify(cert)}'>
+                            ${hasImage(cert.image) ? 
+                                `<img src="${cert.image}" alt="${escapeHtml(cert.name)}" loading="lazy">` : 
+                                `<div class="img-placeholder" style="height:160px;">📜 ยังไม่มีรูป</div>`}
+                            <div class="cert-card-body">
+                                <div class="cert-card-name">${escapeHtml(cert.name)}</div>
+                                <div class="cert-card-org">${escapeHtml(cert.org)}</div>
+                                <div class="cert-card-year">${escapeHtml(cert.year)}</div>
+                            </div>
                         </div>
-                    </div>
-                `).join('');
+                    `).join('');
             }
 
             grid.querySelectorAll('.cert-card').forEach(card => {
@@ -3106,34 +3292,34 @@
             const categories = ['ALL', ...new Set(projects.map(p => p.category))];
 
             filterContainer.innerHTML = categories.map(cat => `
-                <button class="filter-btn ${state.projectFilter === cat ? 'active' : ''}" 
-                        data-filter="${escapeHtml(cat)}" aria-label="กรอง: ${escapeHtml(cat)}">
-                    ${escapeHtml(cat)}
-                </button>
-            `).join('');
+                    <button class="filter-btn ${state.projectFilter === cat ? 'active' : ''}" 
+                            data-filter="${escapeHtml(cat)}" aria-label="กรอง: ${escapeHtml(cat)}">
+                        ${escapeHtml(cat)}
+                    </button>
+                `).join('');
 
             const filtered = state.projectFilter === 'ALL' ?
                 projects :
                 projects.filter(p => p.category === state.projectFilter);
 
             grid.innerHTML = filtered.map((project, index) => `
-                <div class="project-card" data-index="${index}" data-project='${JSON.stringify(project)}'>
-                    ${isValidBase64Image(project.image) ? 
-                        `<img src="${project.image}" alt="${escapeHtml(project.name)}" loading="lazy">` : 
-                        `<div class="img-placeholder" style="height:170px;">🖼️ ยังไม่มีรูป</div>`}
-                    <div class="project-card-body">
-                        <div class="project-card-title">${escapeHtml(project.name)}</div>
-                        <div class="project-card-meta">
-                            <span>${escapeHtml(project.year)}</span>
-                            <span>${escapeHtml(project.category)}</span>
-                        </div>
-                        <div class="project-card-desc">${escapeHtml(project.description)}</div>
-                        <div class="mt-1">
-                            ${project.technology.map(t => `<span class="project-tech-tag">${escapeHtml(t)}</span>`).join(' ')}
+                    <div class="project-card animate-on-scroll visible delay-${(index % 6) + 1}" data-index="${index}" data-project='${JSON.stringify(project)}'>
+                        ${hasImage(project.image) ? 
+                            `<img src="${project.image}" alt="${escapeHtml(project.name)}" loading="lazy">` : 
+                            `<div class="img-placeholder" style="height:170px;">🖼️ ยังไม่มีรูป</div>`}
+                        <div class="project-card-body">
+                            <div class="project-card-title">${escapeHtml(project.name)}</div>
+                            <div class="project-card-meta">
+                                <span>${escapeHtml(project.year)}</span>
+                                <span>${escapeHtml(project.category)}</span>
+                            </div>
+                            <div class="project-card-desc">${escapeHtml(project.description)}</div>
+                            <div class="mt-1">
+                                ${project.technology.map(t => `<span class="project-tech-tag">${escapeHtml(t)}</span>`).join(' ')}
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
 
             grid.querySelectorAll('.project-card').forEach(card => {
                 card.addEventListener('click', function() {
@@ -3150,52 +3336,6 @@
             });
         }
 
-        function renderAchievementsPage() {
-            const achievements = portfolioData.achievements;
-            const container = getEl('achievementsContent');
-
-            const highlighted = achievements.find(a => a.highlight);
-            const others = achievements.filter(a => !a.highlight);
-
-            let html = '';
-
-            if (highlighted) {
-                html += `
-                    <div class="achievement-highlight">
-                        <div class="ach-title"><i class="fas fa-trophy"></i> ${escapeHtml(highlighted.title)}</div>
-                        <div class="ach-desc">${escapeHtml(highlighted.description)}</div>
-                        <div class="ach-year mt-1">${escapeHtml(highlighted.year)} — ${escapeHtml(highlighted.type)}</div>
-                    </div>
-                `;
-            }
-
-            const sortedOthers = [...others].sort((a, b) => parseInt(b.year) - parseInt(a.year));
-
-            const iconMap = {
-                'Leadership': '<i class="fas fa-crown"></i>',
-                'Competition': '<i class="fas fa-medal"></i>',
-                'Academic': '<i class="fas fa-book"></i>',
-                'Other': '<i class="fas fa-star"></i>'
-            };
-
-            html += `<div class="achievement-list">`;
-            html += sortedOthers.map(ach => `
-                <div class="achievement-item">
-                    <div class="achievement-icon">
-                        ${iconMap[ach.type] || iconMap['Other']}
-                    </div>
-                    <div class="achievement-info">
-                        <h4>${escapeHtml(ach.title)}</h4>
-                        <p>${escapeHtml(ach.description)}</p>
-                        <div class="ach-year">${escapeHtml(ach.year)} — ${escapeHtml(ach.type)}</div>
-                    </div>
-                </div>
-            `).join('');
-            html += `</div>`;
-
-            container.innerHTML = html;
-        }
-
         function renderContactPage() {
             const d = portfolioData;
             const p = d.profile;
@@ -3208,11 +3348,11 @@
                 { label: 'โรงเรียน', value: p.school },
                 { label: 'จังหวัด', value: p.province },
             ];
-            grid.innerHTML = items.map(item => `
-                <div class="contact-info-pill">
-                    <span>${escapeHtml(item.value)}</span>
-                </div>
-            `).join('');
+            grid.innerHTML = items.map((item, idx) => `
+                    <div class="contact-info-pill animate-on-scroll visible delay-${idx + 1}">
+                        <span>${escapeHtml(item.value)}</span>
+                    </div>
+                `).join('');
 
             renderSocialIcons(getEl('contactSocialIcons'), d.social);
         }
@@ -3232,53 +3372,38 @@
             document.body.style.overflow = '';
         }
 
-        function openActivityModal(activity) {
-            const body = `
-                <div class="modal-meta">
-                    <span><i class="fas fa-calendar-alt"></i> ${escapeHtml(activity.year)}</span>
-                    <span><i class="fas fa-map-marker-alt"></i> ${escapeHtml(activity.location)}</span>
-                    <span><i class="fas fa-tag"></i> ${escapeHtml(activity.category)}</span>
-                </div>
-                ${isValidBase64Image(activity.image) ? `<img src="${activity.image}" alt="${escapeHtml(activity.name)}">` : ''}
-                <p><strong>บทบาท:</strong> ${escapeHtml(activity.role)}</p>
-                <p><strong>รายละเอียด:</strong> ${escapeHtml(activity.description)}</p>
-                <p><strong>สิ่งที่ได้เรียนรู้:</strong> ${escapeHtml(activity.learning)}</p>
-            `;
-            openModal(activity.name, body);
-        }
-
         function openCertificateModal(cert) {
             const body = `
-                <div class="modal-meta">
-                    <span><i class="fas fa-building"></i> ${escapeHtml(cert.org)}</span>
-                    <span><i class="fas fa-calendar-alt"></i> ${escapeHtml(cert.year)}</span>
-                    <span><i class="fas fa-tag"></i> ${escapeHtml(cert.category)}</span>
-                </div>
-                ${isValidBase64Image(cert.image) ? 
-                    `<img src="${cert.image}" alt="${escapeHtml(cert.name)}" style="cursor:zoom-in;" onclick="openImageViewer('${cert.image}')">` : 
-                    '<p>ยังไม่มีรูปเกียรติบัตร</p>'}
-                <p><strong>${escapeHtml(cert.name)}</strong></p>
-                <p>ออกโดย: ${escapeHtml(cert.org)}</p>
-            `;
+                    <div class="modal-meta">
+                        <span><i class="fas fa-building"></i> ${escapeHtml(cert.org)}</span>
+                        <span><i class="fas fa-calendar-alt"></i> ${escapeHtml(cert.year)}</span>
+                        <span><i class="fas fa-tag"></i> ${escapeHtml(cert.category)}</span>
+                    </div>
+                    ${hasImage(cert.image) ? 
+                        `<img src="${cert.image}" alt="${escapeHtml(cert.name)}" style="cursor:zoom-in;" onclick="openImageViewer('${cert.image}')">` : 
+                        '<p>ยังไม่มีรูปเกียรติบัตร</p>'}
+                    <p><strong>${escapeHtml(cert.name)}</strong></p>
+                    <p>ออกโดย: ${escapeHtml(cert.org)}</p>
+                `;
             openModal(cert.name, body);
         }
 
         function openProjectModal(project) {
             const body = `
-                <div class="modal-meta">
-                    <span><i class="fas fa-calendar-alt"></i> ${escapeHtml(project.year)}</span>
-                    <span><i class="fas fa-tag"></i> ${escapeHtml(project.category)}</span>
-                </div>
-                ${isValidBase64Image(project.image) ? 
-                    `<img src="${project.image}" alt="${escapeHtml(project.name)}" style="cursor:zoom-in;" onclick="openImageViewer('${project.image}')">` : 
-                    '<p>ยังไม่มีรูปผลงาน</p>'}
-                <p><strong>เทคโนโลยี:</strong> ${project.technology.map(t => escapeHtml(t)).join(', ')}</p>
-                <p><strong>รายละเอียด:</strong> ${escapeHtml(project.description)}</p>
-                <p><strong>ความรับผิดชอบ:</strong> ${escapeHtml(project.responsibility)}</p>
-                <p><strong>สิ่งที่ได้เรียนรู้:</strong> ${escapeHtml(project.learning)}</p>
-                ${project.link ? `<p><i class="fas fa-link"></i> <a href="${escapeHtml(project.link)}" target="_blank" rel="noopener noreferrer">ลิงก์ผลงาน</a></p>` : ''}
-                ${project.github ? `<p><i class="fas fa-laptop-code"></i> <a href="${escapeHtml(project.github)}" target="_blank" rel="noopener noreferrer">GitHub Repository</a></p>` : ''}
-            `;
+                    <div class="modal-meta">
+                        <span><i class="fas fa-calendar-alt"></i> ${escapeHtml(project.year)}</span>
+                        <span><i class="fas fa-tag"></i> ${escapeHtml(project.category)}</span>
+                    </div>
+                    ${hasImage(project.image) ? 
+                        `<img src="${project.image}" alt="${escapeHtml(project.name)}" style="cursor:zoom-in;" onclick="openImageViewer('${project.image}')">` : 
+                        '<p>ยังไม่มีรูปผลงาน</p>'}
+                    <p><strong>เทคโนโลยี:</strong> ${project.technology.map(t => escapeHtml(t)).join(', ')}</p>
+                    <p><strong>รายละเอียด:</strong> ${escapeHtml(project.description)}</p>
+                    <p><strong>ความรับผิดชอบ:</strong> ${escapeHtml(project.responsibility)}</p>
+                    <p><strong>สิ่งที่ได้เรียนรู้:</strong> ${escapeHtml(project.learning)}</p>
+                    ${project.link ? `<p><i class="fas fa-link"></i> <a href="${escapeHtml(project.link)}" target="_blank" rel="noopener noreferrer">ลิงก์ผลงาน</a></p>` : ''}
+                    ${project.github ? `<p><i class="fas fa-laptop-code"></i> <a href="${escapeHtml(project.github)}" target="_blank" rel="noopener noreferrer">GitHub Repository</a></p>` : ''}
+                `;
             openModal(project.name, body);
         }
 
@@ -3286,7 +3411,7 @@
         // IMAGE VIEWER
         // ============================================================
         function openImageViewer(src) {
-            if (!isValidBase64Image(src)) {
+            if (!hasImage(src)) {
                 alert('ยังไม่มีรูปภาพนี้');
                 return;
             }
@@ -3311,22 +3436,20 @@
                 { page: 3, label: 'Statement' },
                 { page: 4, label: 'Education' },
                 { page: 5, label: 'Skills' },
-                { page: 6, label: 'Activities' },
-                { page: 7, label: 'Certificates' },
-                { page: 8, label: 'Projects' },
-                { page: 9, label: 'Achievements' },
-                { page: 10, label: 'Contact' },
+                { page: 6, label: 'Certificates' },
+                { page: 7, label: 'Projects' },
+                { page: 8, label: 'Contact' },
             ];
 
             navContainer.innerHTML = items.map(item => `
-                <button class="sidebar-nav-item ${state.currentPage === item.page ? 'active' : ''}" 
-                        data-page="${item.page}" 
-                        aria-label="ไปหน้า ${item.label}"
-                        role="menuitem">
-                    <span class="nav-number">${String(item.page).padStart(2, '0')}</span>
-                    <span>${item.label}</span>
-                </button>
-            `).join('');
+                    <button class="sidebar-nav-item ${state.currentPage === item.page ? 'active' : ''}" 
+                            data-page="${item.page}" 
+                            aria-label="ไปหน้า ${item.label}"
+                            role="menuitem">
+                        <span class="nav-number">${item.page}</span>
+                        <span class="nav-label">${item.label}</span>
+                    </button>
+                `).join('');
 
             navContainer.querySelectorAll('.sidebar-nav-item').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -3406,6 +3529,36 @@
                 renderCertificatesPage();
             }, 350));
 
+            // Ripple effect on buttons
+            document.querySelectorAll('.btn-primary, .btn-outline, .nav-control-btn, .filter-btn, .theme-toggle-btn')
+                .forEach(el => {
+                    el.addEventListener('click', function(e) {
+                        createRipple(e, this);
+                    });
+                });
+
+            // Mouse tracking for glass cards glow
+            document.querySelectorAll('.glass-card, .stat-card, .cert-card, .project-card').forEach(el => {
+                el.addEventListener('mousemove', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+                    this.style.setProperty('--mx', x + '%');
+                    this.style.setProperty('--my', y + '%');
+                });
+            });
+
+            // Mouse tracking for nav buttons
+            document.querySelectorAll('.nav-control-btn').forEach(el => {
+                el.addEventListener('mousemove', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+                    this.style.setProperty('--mx', x + '%');
+                    this.style.setProperty('--my', y + '%');
+                });
+            });
+
             window.addEventListener('resize', debounce(function() {
                 if (window.particleSystem) {
                     window.particleSystem.resize();
@@ -3450,10 +3603,8 @@
                 }
                 if (saved.skills) portfolioData.skills = saved.skills;
                 if (saved.statement) portfolioData.statement = saved.statement;
-                if (saved.activities) portfolioData.activities = saved.activities;
                 if (saved.certificates) portfolioData.certificates = saved.certificates;
                 if (saved.projects) portfolioData.projects = saved.projects;
-                if (saved.achievements) portfolioData.achievements = saved.achievements;
                 if (saved.social) portfolioData.social = saved.social;
                 console.log('[Storage] Data loaded from localStorage');
             }
@@ -3469,10 +3620,8 @@
                         }
                         if (data.skills) portfolioData.skills = data.skills;
                         if (data.statement) portfolioData.statement = data.statement;
-                        if (data.activities) portfolioData.activities = data.activities;
                         if (data.certificates) portfolioData.certificates = data.certificates;
                         if (data.projects) portfolioData.projects = data.projects;
-                        if (data.achievements) portfolioData.achievements = data.achievements;
                         if (data.social) portfolioData.social = data.social;
                         renderAllPages();
                         console.log('[Firebase] Data loaded from Firestore');
@@ -3491,18 +3640,20 @@
             renderStatementPage();
             renderEducationPage();
             renderSkillsPage();
-            renderActivitiesPage();
             renderCertificatesPage();
             renderProjectsPage();
-            renderAchievementsPage();
             renderContactPage();
 
             const progress = (state.currentPage / state.totalPages) * 100;
             getEl('progressBarFill').style.width = progress + '%';
-            getEl('pageIndicator').textContent =
-                `${String(state.currentPage).padStart(2, '0')} / ${String(state.totalPages).padStart(2, '0')}`;
+            const indicatorText = getEl('indicatorText');
+            if (indicatorText) {
+                indicatorText.textContent = `${state.currentPage} / ${state.totalPages}`;
+            }
             getEl('prevPageBtn').disabled = state.currentPage === 1;
             getEl('nextPageBtn').disabled = state.currentPage === state.totalPages;
+
+            setTimeout(() => observeScrollElements(), 300);
         }
 
         // ============================================================

@@ -73,7 +73,7 @@
 
             --sidebar-width: 260px;
             --progress-bar-height: 4px;
-            --nav-controls-bottom: 50px;
+            --nav-controls-bottom: 40px;
         }
 
         /* Dark Mode */
@@ -605,30 +605,40 @@
             }
         }
 
-        /* ==================== NAVIGATION CONTROLS ==================== */
+        /* ==================== NAVIGATION CONTROLS (CENTERED) ==================== */
         .nav-controls {
             position: fixed;
             bottom: var(--nav-controls-bottom);
-            right: 24px;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 850;
             display: flex;
-            gap: 10px;
+            gap: 14px;
             align-items: center;
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 60px;
+            padding: 8px 18px;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-base);
+        }
+        .nav-controls:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--purple-light);
         }
         .nav-control-btn {
-            background: var(--bg-glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color);
+            background: transparent;
+            border: none;
             border-radius: 50%;
-            width: 52px;
-            height: 52px;
+            width: 46px;
+            height: 46px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            color: var(--text-primary);
-            box-shadow: var(--shadow-md);
+            font-size: 1.1rem;
+            color: var(--text-secondary);
             transition: all var(--transition-fast);
             user-select: none;
             position: relative;
@@ -638,39 +648,52 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.2), transparent 60%);
+            background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(124, 58, 237, 0.15), transparent 60%);
             opacity: 0;
             transition: opacity 0.4s;
             pointer-events: none;
+            border-radius: 50%;
         }
         .nav-control-btn:hover::after {
             opacity: 1;
         }
         .nav-control-btn:hover {
-            background: var(--purple-primary);
-            color: white;
-            box-shadow: var(--shadow-glow);
-            transform: translateY(-3px) scale(1.04);
+            background: var(--purple-glass);
+            color: var(--purple-primary);
+            transform: translateY(-2px) scale(1.05);
         }
         .nav-control-btn:active {
-            transform: translateY(0) scale(0.94);
+            transform: translateY(0) scale(0.92);
         }
         .nav-control-btn:disabled {
-            opacity: 0.3;
+            opacity: 0.25;
             pointer-events: none;
             transform: none !important;
         }
         .nav-home-btn {
-            background: var(--purple-primary);
-            color: white;
+            background: var(--purple-primary) !important;
+            color: white !important;
             box-shadow: var(--shadow-glow);
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             letter-spacing: 0.5px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
         }
         .nav-home-btn:hover {
-            background: var(--purple-dark);
-            transform: translateY(-3px) scale(1.06) !important;
+            background: var(--purple-dark) !important;
+            transform: translateY(-3px) scale(1.08) !important;
+            box-shadow: 0 0 30px var(--purple-glow) !important;
+        }
+        .nav-home-btn:active {
+            transform: translateY(0) scale(0.94) !important;
+        }
+        .nav-control-divider {
+            width: 1px;
+            height: 28px;
+            background: var(--border-color);
+            flex-shrink: 0;
         }
 
         /* ==================== GLASSMORPHISM CARD ==================== */
@@ -805,6 +828,24 @@
         }
         .section-heading:hover i {
             transform: rotate(10deg) scale(1.1);
+        }
+        .section-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+            margin: 36px 0 28px;
+            position: relative;
+        }
+        .section-divider::after {
+            content: '◆';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-primary);
+            padding: 0 12px;
+            color: var(--purple-light);
+            font-size: 0.7rem;
         }
 
         /* ==================== BUTTONS ==================== */
@@ -1125,29 +1166,63 @@
             color: var(--text-primary);
             text-align: right;
         }
-        .social-icons-row {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 16px;
+
+        /* ==================== SOCIAL MEDIA — ENHANCED ==================== */
+        .social-section {
+            margin-top: 28px;
+            padding: 24px 20px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-base);
         }
-        .social-icon-link {
-            width: 44px;
-            height: 44px;
+        .social-section:hover {
+            border-color: var(--purple-light);
+            box-shadow: var(--shadow-md);
+        }
+        .social-section .social-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--purple-primary);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .social-section .social-title i {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+        .social-icons-row-enhanced {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            justify-content: center;
+            align-items: center;
+        }
+        .social-icon-link-enhanced {
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: var(--purple-glass);
-            border: 1px solid var(--border-color);
+            border: 2px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.7rem;
             color: var(--text-primary);
-            transition: all var(--transition-fast);
+            transition: all var(--transition-base);
             text-decoration: none;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
-        .social-icon-link::after {
+        .social-icon-link-enhanced::after {
             content: '';
             position: absolute;
             inset: 0;
@@ -1155,20 +1230,100 @@
             opacity: 0;
             transition: opacity var(--transition-fast);
             border-radius: 50%;
+            transform: scale(0.6);
         }
-        .social-icon-link:hover {
-            color: white;
+        .social-icon-link-enhanced:hover {
+            transform: translateY(-6px) scale(1.12) rotate(-2deg);
             border-color: var(--purple-primary);
-            transform: translateY(-4px) scale(1.1);
-            box-shadow: var(--shadow-glow);
+            box-shadow: 0 8px 30px var(--purple-glow);
+            color: white;
         }
-        .social-icon-link:hover::after {
+        .social-icon-link-enhanced:hover::after {
             opacity: 1;
+            transform: scale(1);
         }
-        .social-icon-link i {
+        .social-icon-link-enhanced i {
             position: relative;
             z-index: 1;
+            transition: transform var(--transition-fast);
         }
+        .social-icon-link-enhanced:hover i {
+            transform: scale(1.1);
+        }
+        /* กระเพื่อม (ripple) ใช้ร่วมกับคลาส .ripple ที่มีอยู่แล้ว */
+        .social-icon-link-enhanced .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.35);
+            transform: scale(0);
+            animation: rippleSocial 0.8s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes rippleSocial {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        /* animation กระเพื่อมต่อเนื่อง (pulse) */
+        .social-icon-link-enhanced .pulse-ring {
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid var(--purple-light);
+            opacity: 0;
+            pointer-events: none;
+            animation: pulseRing 2.4s ease-out infinite;
+        }
+        .social-icon-link-enhanced:nth-child(1) .pulse-ring {
+            animation-delay: 0s;
+        }
+        .social-icon-link-enhanced:nth-child(2) .pulse-ring {
+            animation-delay: 0.6s;
+        }
+        .social-icon-link-enhanced:nth-child(3) .pulse-ring {
+            animation-delay: 1.2s;
+        }
+        .social-icon-link-enhanced:nth-child(4) .pulse-ring {
+            animation-delay: 0.3s;
+        }
+        .social-icon-link-enhanced:nth-child(5) .pulse-ring {
+            animation-delay: 0.9s;
+        }
+        @keyframes pulseRing {
+            0% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(1.6);
+                opacity: 0;
+            }
+        }
+        /* สีเฉพาะแต่ละแพลตฟอร์ม */
+        .social-icon-link-enhanced[data-platform="facebook"]:hover {
+            background: #1877F2;
+            border-color: #1877F2;
+        }
+        .social-icon-link-enhanced[data-platform="instagram"]:hover {
+            background: radial-gradient(circle at 30% 30%, #fdf497, #fd5949, #d6249f, #285AEB);
+            border-color: #d6249f;
+        }
+        .social-icon-link-enhanced[data-platform="tiktok"]:hover {
+            background: #000000;
+            border-color: #00f2ea;
+            color: #00f2ea;
+        }
+        .social-icon-link-enhanced[data-platform="github"]:hover {
+            background: #181717;
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+        .social-icon-link-enhanced[data-platform="linkedin"]:hover {
+            background: #0A66C2;
+            border-color: #0A66C2;
+        }
+
         .tags-list {
             display: flex;
             flex-wrap: wrap;
@@ -1440,13 +1595,13 @@
             color: var(--purple-dark);
         }
 
-        /* ==================== CERTIFICATES PAGE (6) ==================== */
+        /* ==================== COMBINED PAGE (6) — CERTIFICATES + PROJECTS ==================== */
         .cert-search-input {
             width: 100%;
             max-width: 400px;
             padding: 12px 18px;
             border-radius: 50px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             font-size: 0.9rem;
             transition: all var(--transition-fast);
             border: 2px solid var(--border-color);
@@ -1460,6 +1615,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 20px;
+            margin-bottom: 10px;
         }
         .cert-card {
             background: var(--bg-glass);
@@ -1510,11 +1666,12 @@
             color: var(--purple-primary);
         }
 
-        /* ==================== PROJECTS PAGE (7) ==================== */
+        /* Projects inside combined page */
         .project-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 22px;
+            margin-top: 4px;
         }
         .project-card {
             background: var(--bg-glass);
@@ -1589,7 +1746,7 @@
             transform: scale(1.05);
         }
 
-        /* ==================== CONTACT PAGE (8) ==================== */
+        /* ==================== CONTACT PAGE (7) ==================== */
         .contact-content {
             text-align: center;
             padding: 40px 20px;
@@ -1644,7 +1801,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
         .filter-btn {
             padding: 8px 18px;
@@ -1928,6 +2085,20 @@
                 opacity: 1 !important;
                 transform: none !important;
             }
+            .social-icon-link-enhanced {
+                border: 1px solid #ddd !important;
+                background: #f5f5f5 !important;
+                color: #333 !important;
+                box-shadow: none !important;
+            }
+            .social-icon-link-enhanced:hover {
+                transform: none !important;
+                background: #f5f5f5 !important;
+                color: #333 !important;
+            }
+            .social-icon-link-enhanced .pulse-ring {
+                display: none !important;
+            }
         }
 
         /* ==================== RESPONSIVE DESIGN ==================== */
@@ -1941,12 +2112,20 @@
             .cover-name {
                 font-size: 2.4rem;
             }
+            .social-icon-link-enhanced {
+                width: 52px;
+                height: 52px;
+                font-size: 1.4rem;
+            }
+            .social-icons-row-enhanced {
+                gap: 14px;
+            }
         }
 
         @media (max-width: 768px) {
             :root {
                 --sidebar-width: 0px;
-                --nav-controls-bottom: 18px;
+                --nav-controls-bottom: 16px;
             }
             .sidebar {
                 transform: translateX(-100%);
@@ -2013,14 +2192,22 @@
                 height: 140px;
             }
             .nav-controls {
-                right: 12px;
-                bottom: 16px;
+                padding: 6px 12px;
                 gap: 6px;
+                border-radius: 40px;
             }
             .nav-control-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 1rem;
+                width: 38px;
+                height: 38px;
+                font-size: 0.9rem;
+            }
+            .nav-home-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 0.65rem;
+            }
+            .nav-control-divider {
+                height: 20px;
             }
             .page-indicator {
                 top: 14px;
@@ -2053,6 +2240,17 @@
             }
             .page-title::after {
                 width: 30%;
+            }
+            .social-icon-link-enhanced {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+            .social-icons-row-enhanced {
+                gap: 12px;
+            }
+            .social-section {
+                padding: 18px 14px;
             }
         }
 
@@ -2093,11 +2291,38 @@
                 width: 110px;
                 height: 110px;
             }
+            .nav-controls {
+                padding: 4px 10px;
+                gap: 4px;
+                border-radius: 32px;
+            }
+            .nav-control-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 0.75rem;
+            }
             .nav-home-btn {
-                font-size: 0.65rem;
-                padding: 0 10px;
-                width: auto;
-                border-radius: 20px;
+                width: 34px;
+                height: 34px;
+                font-size: 0.6rem;
+            }
+            .nav-control-divider {
+                height: 16px;
+            }
+            .social-icon-link-enhanced {
+                width: 44px;
+                height: 44px;
+                font-size: 1.1rem;
+            }
+            .social-icons-row-enhanced {
+                gap: 10px;
+            }
+            .social-section {
+                padding: 14px 10px;
+            }
+            .social-section .social-title {
+                font-size: 0.75rem;
+                margin-bottom: 12px;
             }
         }
 
@@ -2188,7 +2413,7 @@
     <!-- ==================== PAGE INDICATOR ==================== -->
     <div class="page-indicator" id="pageIndicator" aria-live="polite">
         <span class="indicator-dot"></span>
-        <span id="indicatorText">1 / 8</span>
+        <span id="indicatorText">1 / 7</span>
     </div>
 
     <!-- ==================== MOBILE NAV TOGGLE ==================== -->
@@ -2262,10 +2487,13 @@
                         <!-- Profile info rows injected by JS -->
                     </div>
                 </div>
-                <div class="mt-3 animate-on-scroll visible">
-                    <h3 class="section-heading">Social Media</h3>
-                    <div class="social-icons-row" id="socialIconsRow">
-                        <!-- Social icons injected by JS -->
+                <!-- ===== SOCIAL MEDIA — ENHANCED ===== -->
+                <div class="social-section animate-on-scroll visible">
+                    <div class="social-title">
+                        <i class="fas fa-share-alt"></i> Connect with Me
+                    </div>
+                    <div class="social-icons-row-enhanced" id="socialIconsRowEnhanced">
+                        <!-- Social icons injected by JS (enhanced) -->
                     </div>
                 </div>
             </section>
@@ -2288,12 +2516,10 @@
                 <div class="education-stats" id="educationStats">
                     <!-- Stat cards injected by JS -->
                 </div>
-                <div class="chart-container animate-on-scroll visible" id="gpaChartContainer">
-                    <canvas id="gpaChart" aria-label="กราฟผลการเรียน"></canvas>
-                </div>
+               
                 <div class="student-status-doc mt-3 animate-on-scroll visible">
-                    <h3 class="section-heading">Certification of Student Status (ปพ.7)</h3>
-                    <img src="" alt="เอกสาร ปพ.7" id="studentStatusDocImage" loading="lazy" style="display:none; cursor:pointer;" title="คลิกเพื่อดูภาพขนาดใหญ่">
+                    <h3 class="section-heading">Certification of Student Status (ปพ.1)</h3>
+                    <img src="" alt="เอกสาร ปพ.1" id="studentStatusDocImage" loading="lazy" style="display:none; cursor:pointer;" title="คลิกเพื่อดูภาพขนาดใหญ่">
                     <div id="studentStatusPlaceholder" class="img-placeholder" style="max-width:300px;height:200px;margin:0 auto;border-radius:12px;">
                         ยังไม่มีเอกสาร
                     </div>
@@ -2309,41 +2535,52 @@
                 </div>
             </section>
 
-            <!-- ==================== PAGE 6: CERTIFICATES ==================== -->
-            <section class="page" id="page-06" data-page="6" aria-label="เกียรติบัตร">
-                <h2 class="page-title animate-on-scroll visible">CERTIFICATES</h2>
-                <p class="page-subtitle animate-on-scroll visible">My Awards & Recognition</p>
-                <input type="text" class="cert-search-input animate-on-scroll visible" id="certSearchInput" placeholder="🔍 ค้นหาเกียรติบัตร..." aria-label="ค้นหาเกียรติบัตร">
-                <div class="filter-buttons animate-on-scroll visible" id="certFilters">
-                    <!-- Filter buttons injected by JS -->
+            <!-- ==================== PAGE 6: CERTIFICATES + PROJECTS (COMBINED) ==================== -->
+            <section class="page" id="page-06" data-page="6" aria-label="เกียรติบัตรและผลงาน">
+                <h2 class="page-title animate-on-scroll visible">CERTIFICATES & PROJECTS</h2>
+                <p class="page-subtitle animate-on-scroll visible">My Awards & Works</p>
+
+                <!-- === CERTIFICATES SECTION === -->
+                <div class="animate-on-scroll visible">
+                    <h3 class="section-heading">
+                        <i class="fas fa-award"></i> Certificates
+                    </h3>
+                    <input type="text" class="cert-search-input" id="certSearchInput" placeholder="🔍 ค้นหาเกียรติบัตร..." aria-label="ค้นหาเกียรติบัตร">
+                    <div class="filter-buttons" id="certFilters">
+                        <!-- Filter buttons injected by JS -->
+                    </div>
+                    <div class="cert-grid" id="certGrid">
+                        <!-- Certificate cards injected by JS -->
+                    </div>
                 </div>
-                <div class="cert-grid" id="certGrid">
-                    <!-- Certificate cards injected by JS -->
+
+                <!-- === DIVIDER === -->
+                <div class="section-divider"></div>
+
+                <!-- === PROJECTS SECTION === -->
+                <div class="animate-on-scroll visible">
+                    <h3 class="section-heading">
+                        <i class="fas fa-code"></i> Projects
+                    </h3>
+                    <div class="filter-buttons" id="projectFilters">
+                        <!-- Filter buttons injected by JS -->
+                    </div>
+                    <div class="project-grid" id="projectGrid">
+                        <!-- Project cards injected by JS -->
+                    </div>
                 </div>
             </section>
 
-            <!-- ==================== PAGE 7: PROJECTS ==================== -->
-            <section class="page" id="page-07" data-page="7" aria-label="ผลงาน">
-                <h2 class="page-title animate-on-scroll visible">MY PROJECTS</h2>
-                <p class="page-subtitle animate-on-scroll visible">Portfolio & Works</p>
-                <div class="filter-buttons animate-on-scroll visible" id="projectFilters">
-                    <!-- Filter buttons injected by JS -->
-                </div>
-                <div class="project-grid" id="projectGrid">
-                    <!-- Project cards injected by JS -->
-                </div>
-            </section>
-
-            <!-- ==================== PAGE 8: CONTACT ==================== -->
-            <section class="page" id="page-08" data-page="8" aria-label="ติดต่อ">
+            <!-- ==================== PAGE 7: CONTACT ==================== -->
+            <section class="page" id="page-07" data-page="7" aria-label="ติดต่อ">
                 <div class="contact-content">
                     <h2 class="contact-title animate-on-scroll visible">THANK YOU</h2>
                     <p class="contact-subtitle animate-on-scroll visible">Thank you for exploring my portfolio</p>
                     <div class="contact-info-grid animate-on-scroll visible" id="contactInfoGrid">
                         <!-- Contact info pills injected by JS -->
                     </div>
-                    <div class="social-icons-row flex-center mt-3 animate-on-scroll visible" id="contactSocialIcons">
-                        <!-- Social icons injected -->
+                    <div class="social-icons-row-enhanced flex-center mt-3 animate-on-scroll visible" id="contactSocialIconsEnhanced">
+                        <!-- Social icons injected (enhanced) -->
                     </div>
                     <button class="btn-primary mt-4 animate-on-scroll visible" id="backToCoverBtn" aria-label="กลับไปหน้าปก">
                         <i class="fas fa-arrow-left"></i> BACK TO COVER
@@ -2354,10 +2591,12 @@
         </div>
     </main>
 
-    <!-- ==================== NAVIGATION CONTROLS ==================== -->
+    <!-- ==================== NAVIGATION CONTROLS (CENTERED) ==================== -->
     <div class="nav-controls" role="group" aria-label="ปุ่มนำทาง">
         <button class="nav-control-btn" id="prevPageBtn" aria-label="หน้าก่อนหน้า"><i class="fas fa-chevron-left"></i></button>
+        <div class="nav-control-divider"></div>
         <button class="nav-control-btn nav-home-btn" id="homeBtn" aria-label="กลับหน้าปก"><i class="fas fa-home"></i></button>
+        <div class="nav-control-divider"></div>
         <button class="nav-control-btn" id="nextPageBtn" aria-label="หน้าถัดไป"><i class="fas fa-chevron-right"></i></button>
     </div>
 
@@ -2396,23 +2635,24 @@
                 bio: "นักเรียนผู้สนใจด้านเทคโนโลยีและการออกแบบ มุ่งมั่นพัฒนาทักษะการเขียนโปรแกรมและการสร้างสรรค์สื่อดิจิทัล",
                 specialAbilities: ["การเขียนโปรแกรม", "ออกแบบ UI/UX", "ตัดต่อวิดีโอ"],
                 hobbies: ["เล่นเกม", "เล่นฟังเพลง", "ถ่ายภาพ", ""],
-                profileImage: "img/E485E77C-DE6C-4AE8-A41B-5EDAB24E2200.jpg" // ใช้ URL แทน base64
+                profileImage: "img/E485E77C-DE6C-4AE8-A41B-5EDAB24E2200.jpg"
             },
             education: {
-                gpax: "3.85",
+                gpax: "3.06",
                 tgat: "85.50",
                 tpat: "78.25",
                 ielts: "6.5",
                 school: "โรงเรียนอรุณประดิษฐ",
                 level: "มัธยมศึกษาปีที่ 6",
                 terms: [
-                    { term: "ม.4 เทอม 1", gpa: 3.75 },
-                    { term: "ม.4 เทอม 2", gpa: 3.82 },
-                    { term: "ม.5 เทอม 1", gpa: 3.88 },
-                    { term: "ม.5 เทอม 2", gpa: 3.91 },
-                    { term: "ม.6 เทอม 1", gpa: 3.85 }
+                    { term: "เทอม 1/66", gpa: 3.10 },
+                    { term: "เทอม 2/66", gpa: 3.28 },
+                    { term: "เทอม 1/67", gpa: 3.42 },
+                    { term: "เทอม 2/67", gpa: 3.55 },
+                    { term: "เทอม 1/68", gpa: 3.65 },
+                    { term: "เทอม 2/68", gpa: 3.78 }
                 ],
-                studentStatusDoc: "" // ใช้ URL หรือค่าว่าง
+                studentStatusDoc: ""
             },
             skills: {
                 technology: [
@@ -2447,16 +2687,13 @@
                 goal: "เป้าหมายระยะสั้นของผมคือการเข้าเรียนในมหาวิทยาลัยเพื่อศึกษาเชิงลึกด้านเทคโนโลยีและการออกแบบ และเป้าหมายระยะยาวคือการเป็นนักพัฒนาที่สามารถสร้างผลิตภัณฑ์ที่มีประโยชน์ต่อสังคม พร้อมทั้งแบ่งปันความรู้ให้กับผู้ที่สนใจ",
                 future: "ในอนาคต ผมอยากทำงานในสาย Full-Stack Development หรือ UI/UX Design เพื่อสร้างประสบการณ์ดิจิทัลที่ยอดเยี่ยมให้กับผู้ใช้ ผมเชื่อว่าการผสมผสานระหว่างทักษะด้านเทคนิคและความคิดสร้างสรรค์จะช่วยให้ผมสร้างสิ่งที่มีคุณค่าและยั่งยืนได้"
             },
-            activities: [
-                // Kept for data integrity but page removed
-            ],
             certificates: [
                 {
                     name: "รางวัลรองชนะเลิศ อันดับที่ 1 การแข่งขันสร้างเกม Roblox ระดับ ม.ปลาย",
                     org: "มูลนิธิแห่งสภาคีรสตจักร์ในประเทศไทย",
                     year: "2567",
                     category: "Competition",
-                    image: "img\\roblox.png" // ใช้ URL
+                    image: "img\\roblox.png"
                 },
                 {
                     name: "ละครวันภาษาไทย (บริษัทกากินเทคชาติดี)",
@@ -2512,9 +2749,6 @@
                     link: "", github: "https://github.com/example/portfolio", image: ""
                 }
             ],
-            achievements: [
-                // Kept for data integrity but page removed
-            ],
             social: {
                 facebook: "https://www.facebook.com/minna.chansaeng",
                 instagram: "https://instagram.com/clash_tooru",
@@ -2563,7 +2797,7 @@
         // ============================================================
         const state = {
             currentPage: 1,
-            totalPages: 8,
+            totalPages: 7,
             theme: localStorage.getItem('portfolio_theme') || 'light',
             certFilter: 'ALL',
             certSearchTerm: '',
@@ -2578,9 +2812,8 @@
             3: 'Statement',
             4: 'Education',
             5: 'Skills',
-            6: 'Certificates',
-            7: 'Projects',
-            8: 'Contact'
+            6: 'Certificates & Projects',
+            7: 'Contact'
         };
 
         let gpaChartInstance = null;
@@ -2590,7 +2823,6 @@
         // ============================================================
         function getEl(id) { return document.getElementById(id); }
 
-        // ============ ฟังก์ชันเช็คว่ามีรูปหรือไม่ (แทนที่ isValidBase64Image) ============
         function hasImage(src) {
             return typeof src === 'string' && src.trim() !== '';
         }
@@ -2770,7 +3002,6 @@
                     const currentAlpha = p.alpha * (0.6 + Math.sin(p.pulse) * 0.4);
                     const size = p.radius * (0.9 + Math.sin(p.pulse * 0.7) * 0.15);
 
-                    // Glow
                     const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, size * 4);
                     grad.addColorStop(0, `rgba(${baseColor}, ${currentAlpha * 0.6})`);
                     grad.addColorStop(1, `rgba(${baseColor}, 0)`);
@@ -2779,7 +3010,6 @@
                     ctx.fillStyle = grad;
                     ctx.fill();
 
-                    // Core
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
                     ctx.fillStyle = `rgba(${baseColor}, ${currentAlpha * 0.7})`;
@@ -2791,7 +3021,6 @@
                     ctx.fill();
                 });
 
-                // Connections
                 for (let i = 0; i < this.particles.length; i++) {
                     for (let j = i + 1; j < this.particles.length; j++) {
                         const p1 = this.particles[i];
@@ -2816,7 +3045,7 @@
         }
 
         // ============================================================
-        // RIPPLE EFFECT
+        // RIPPLE EFFECT (สำหรับ social icon)
         // ============================================================
         function createRipple(e, element) {
             const rect = element.getBoundingClientRect();
@@ -2840,7 +3069,6 @@
             if (pageNumber < 1 || pageNumber > state.totalPages) return;
             if (pageNumber === state.currentPage && !direction) return;
 
-            const oldPage = state.currentPage;
             state.currentPage = pageNumber;
 
             document.querySelectorAll('.page').forEach(page => {
@@ -3021,7 +3249,10 @@
             const allTags = [...p.specialAbilities, ...p.hobbies];
             tagsContainer.innerHTML = allTags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('');
 
-            renderSocialIcons(getEl('socialIconsRow'), d.social);
+            // Enhanced social icons
+            renderSocialIconsEnhanced(getEl('socialIconsRowEnhanced'), d.social);
+            // Also render for contact page
+            renderSocialIconsEnhanced(getEl('contactSocialIconsEnhanced'), d.social);
         }
 
         const socialIconMap = {
@@ -3032,7 +3263,8 @@
             linkedin: 'fab fa-linkedin'
         };
 
-        function renderSocialIcons(container, social) {
+        function renderSocialIconsEnhanced(container, social) {
+            if (!container) return;
             const icons = [
                 { key: 'facebook', label: 'Facebook', url: social.facebook },
                 { key: 'instagram', label: 'Instagram', url: social.instagram },
@@ -3040,14 +3272,26 @@
                 { key: 'github', label: 'GitHub', url: social.github },
                 { key: 'linkedin', label: 'LinkedIn', url: social.linkedin },
             ];
-            container.innerHTML = icons
-                .filter(item => item.url)
-                .map(item => `
-                        <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" 
-                           class="social-icon-link" aria-label="${item.label}" title="${item.label}">
-                            <i class="${socialIconMap[item.key]}"></i>
-                        </a>
-                    `).join('');
+            const filtered = icons.filter(item => item.url);
+            if (filtered.length === 0) {
+                container.innerHTML = '<span style="color:var(--text-muted);font-size:0.85rem;">ไม่มีข้อมูลโซเชียล</span>';
+                return;
+            }
+            container.innerHTML = filtered.map(item => `
+                    <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" 
+                       class="social-icon-link-enhanced" data-platform="${item.key}" 
+                       aria-label="${item.label}" title="${item.label}">
+                        <span class="pulse-ring"></span>
+                        <i class="${socialIconMap[item.key]}"></i>
+                    </a>
+                `).join('');
+
+            // Ripple effect on social icons
+            container.querySelectorAll('.social-icon-link-enhanced').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    createRipple(e, this);
+                });
+            });
         }
 
         function renderStatementPage() {
@@ -3123,7 +3367,12 @@
             const canvas = getEl('gpaChart');
             if (!canvas || typeof Chart === 'undefined') return;
 
-            const terms = portfolioData.education.terms;
+            const terms = portfolioData.education.terms || [];
+            if (terms.length === 0) {
+                canvas.parentElement.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px;">ยังไม่มีข้อมูล GPA</p>';
+                return;
+            }
+
             const labels = terms.map(t => t.term);
             const data = terms.map(t => t.gpa);
 
@@ -3225,37 +3474,39 @@
                 `).join('');
         }
 
-        function renderCertificatesPage() {
+        // ===== COMBINED PAGE: CERTIFICATES + PROJECTS =====
+        function renderCombinedPage() {
+            // ----- Certificates -----
             const certs = portfolioData.certificates;
-            const grid = getEl('certGrid');
-            const filterContainer = getEl('certFilters');
+            const certGrid = getEl('certGrid');
+            const certFilterContainer = getEl('certFilters');
 
-            const categories = ['ALL', ...new Set(certs.map(c => c.category))];
+            const certCategories = ['ALL', ...new Set(certs.map(c => c.category))];
 
-            filterContainer.innerHTML = categories.map(cat => `
+            certFilterContainer.innerHTML = certCategories.map(cat => `
                     <button class="filter-btn ${state.certFilter === cat ? 'active' : ''}" 
                             data-filter="${escapeHtml(cat)}" aria-label="กรอง: ${escapeHtml(cat)}">
                         ${escapeHtml(cat)}
                     </button>
                 `).join('');
 
-            let filtered = certs;
+            let filteredCerts = certs;
             if (state.certFilter !== 'ALL') {
-                filtered = filtered.filter(c => c.category === state.certFilter);
+                filteredCerts = filteredCerts.filter(c => c.category === state.certFilter);
             }
             if (state.certSearchTerm.trim()) {
                 const search = state.certSearchTerm.trim().toLowerCase();
-                filtered = filtered.filter(c =>
+                filteredCerts = filteredCerts.filter(c =>
                     c.name.toLowerCase().includes(search) ||
                     c.org.toLowerCase().includes(search) ||
                     c.year.includes(search)
                 );
             }
 
-            if (filtered.length === 0) {
-                grid.innerHTML = '<p class="text-center mt-3" style="color:var(--text-muted);">ไม่พบเกียรติบัตรที่ค้นหา</p>';
+            if (filteredCerts.length === 0) {
+                certGrid.innerHTML = '<p class="text-center mt-3" style="color:var(--text-muted);">ไม่พบเกียรติบัตรที่ค้นหา</p>';
             } else {
-                grid.innerHTML = filtered.map((cert, index) => `
+                certGrid.innerHTML = filteredCerts.map((cert, index) => `
                         <div class="cert-card animate-on-scroll visible delay-${(index % 6) + 1}" data-index="${index}" data-cert='${JSON.stringify(cert)}'>
                             ${hasImage(cert.image) ? 
                                 `<img src="${cert.image}" alt="${escapeHtml(cert.name)}" loading="lazy">` : 
@@ -3269,69 +3520,72 @@
                     `).join('');
             }
 
-            grid.querySelectorAll('.cert-card').forEach(card => {
+            certGrid.querySelectorAll('.cert-card').forEach(card => {
                 card.addEventListener('click', function() {
                     const certData = JSON.parse(this.dataset.cert);
                     openCertificateModal(certData);
                 });
             });
 
-            filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
+            certFilterContainer.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     state.certFilter = this.dataset.filter;
-                    renderCertificatesPage();
+                    renderCombinedPage();
                 });
             });
-        }
 
-        function renderProjectsPage() {
+            // ----- Projects -----
             const projects = portfolioData.projects;
-            const grid = getEl('projectGrid');
-            const filterContainer = getEl('projectFilters');
+            const projectGrid = getEl('projectGrid');
+            const projectFilterContainer = getEl('projectFilters');
 
-            const categories = ['ALL', ...new Set(projects.map(p => p.category))];
+            const projectCategories = ['ALL', ...new Set(projects.map(p => p.category))];
 
-            filterContainer.innerHTML = categories.map(cat => `
+            projectFilterContainer.innerHTML = projectCategories.map(cat => `
                     <button class="filter-btn ${state.projectFilter === cat ? 'active' : ''}" 
                             data-filter="${escapeHtml(cat)}" aria-label="กรอง: ${escapeHtml(cat)}">
                         ${escapeHtml(cat)}
                     </button>
                 `).join('');
 
-            const filtered = state.projectFilter === 'ALL' ?
+            const filteredProjects = state.projectFilter === 'ALL' ?
                 projects :
                 projects.filter(p => p.category === state.projectFilter);
 
-            grid.innerHTML = filtered.map((project, index) => `
-                    <div class="project-card animate-on-scroll visible delay-${(index % 6) + 1}" data-index="${index}" data-project='${JSON.stringify(project)}'>
-                        ${hasImage(project.image) ? 
-                            `<img src="${project.image}" alt="${escapeHtml(project.name)}" loading="lazy">` : 
-                            `<div class="img-placeholder" style="height:170px;">🖼️ ยังไม่มีรูป</div>`}
-                        <div class="project-card-body">
-                            <div class="project-card-title">${escapeHtml(project.name)}</div>
-                            <div class="project-card-meta">
-                                <span>${escapeHtml(project.year)}</span>
-                                <span>${escapeHtml(project.category)}</span>
-                            </div>
-                            <div class="project-card-desc">${escapeHtml(project.description)}</div>
-                            <div class="mt-1">
-                                ${project.technology.map(t => `<span class="project-tech-tag">${escapeHtml(t)}</span>`).join(' ')}
+            if (filteredProjects.length === 0) {
+                projectGrid.innerHTML = '<p class="text-center mt-3" style="color:var(--text-muted);">ไม่พบโปรเจคที่ค้นหา</p>';
+            } else {
+                projectGrid.innerHTML = filteredProjects.map((project, index) => `
+                        <div class="project-card animate-on-scroll visible delay-${(index % 6) + 1}" data-index="${index}" data-project='${JSON.stringify(project)}'>
+                            ${hasImage(project.image) ? 
+                                `<img src="${project.image}" alt="${escapeHtml(project.name)}" loading="lazy">` : 
+                                `<div class="img-placeholder" style="height:170px;">🖼️ ยังไม่มีรูป</div>`}
+                            <div class="project-card-body">
+                                <div class="project-card-title">${escapeHtml(project.name)}</div>
+                                <div class="project-card-meta">
+                                    <span>${escapeHtml(project.year)}</span>
+                                    <span>${escapeHtml(project.category)}</span>
+                                </div>
+                                <div class="project-card-desc">${escapeHtml(project.description)}</div>
+                                <div class="mt-1">
+                                    ${project.technology.map(t => `<span class="project-tech-tag">${escapeHtml(t)}</span>`).join(' ')}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `).join('');
+                    `).join('');
+            }
 
-            grid.querySelectorAll('.project-card').forEach(card => {
+            projectGrid.querySelectorAll('.project-card').forEach(card => {
                 card.addEventListener('click', function() {
                     const projectData = JSON.parse(this.dataset.project);
                     openProjectModal(projectData);
                 });
             });
 
-            filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
+            projectFilterContainer.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     state.projectFilter = this.dataset.filter;
-                    renderProjectsPage();
+                    renderCombinedPage();
                 });
             });
         }
@@ -3353,8 +3607,6 @@
                         <span>${escapeHtml(item.value)}</span>
                     </div>
                 `).join('');
-
-            renderSocialIcons(getEl('contactSocialIcons'), d.social);
         }
 
         // ============================================================
@@ -3436,9 +3688,8 @@
                 { page: 3, label: 'Statement' },
                 { page: 4, label: 'Education' },
                 { page: 5, label: 'Skills' },
-                { page: 6, label: 'Certificates' },
-                { page: 7, label: 'Projects' },
-                { page: 8, label: 'Contact' },
+                { page: 6, label: 'Cert & Projects' },
+                { page: 7, label: 'Contact' },
             ];
 
             navContainer.innerHTML = items.map(item => `
@@ -3526,7 +3777,7 @@
             const certSearch = getEl('certSearchInput');
             certSearch.addEventListener('input', debounce(function() {
                 state.certSearchTerm = this.value;
-                renderCertificatesPage();
+                renderCombinedPage();
             }, 350));
 
             // Ripple effect on buttons
@@ -3640,8 +3891,7 @@
             renderStatementPage();
             renderEducationPage();
             renderSkillsPage();
-            renderCertificatesPage();
-            renderProjectsPage();
+            renderCombinedPage();
             renderContactPage();
 
             const progress = (state.currentPage / state.totalPages) * 100;

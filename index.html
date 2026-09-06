@@ -1,0 +1,3682 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio — Computer Science / IT / Communication Arts</title>
+
+    <!-- ==================== GOOGLE FONTS ==================== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- ==================== CHART.JS CDN ==================== -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer>
+    </script>
+
+    <!-- ==================== FIREBASE COMPAT CDN ==================== -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js" defer>
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js" defer>
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js" defer>
+    </script>
+
+    <style>
+        /* ==================== CSS CUSTOM PROPERTIES / THEME ==================== */
+        :root {
+            --purple-primary: #7C3AED;
+            --purple-dark: #5B21B6;
+            --purple-darker: #4C1D95;
+            --purple-deep: #2E1065;
+            --purple-light: #A78BFA;
+            --purple-lighter: #C4B5FD;
+            --purple-bg: #EDE9FE;
+            --purple-glow: rgba(124, 58, 237, 0.4);
+            --purple-glass: rgba(124, 58, 237, 0.08);
+
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8F7FC;
+            --bg-card: #FFFFFF;
+            --bg-glass: rgba(255, 255, 255, 0.72);
+            --bg-sidebar: rgba(255, 255, 255, 0.85);
+            --bg-canvas: #F8F7FC;
+
+            --text-primary: #1A0B2E;
+            --text-secondary: #4A3B5E;
+            --text-muted: #8A7A9E;
+            --text-white: #FFFFFF;
+            --text-on-purple: #FFFFFF;
+
+            --border-color: rgba(124, 58, 237, 0.15);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 20px rgba(76, 29, 149, 0.10);
+            --shadow-lg: 0 8px 40px rgba(76, 29, 149, 0.15);
+            --shadow-glow: 0 0 30px var(--purple-glow);
+
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --radius-full: 50%;
+
+            --font-heading: 'Noto Sans Thai', 'Inter', sans-serif;
+            --font-body: 'Noto Sans Thai', 'Inter', sans-serif;
+
+            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-page: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+            --sidebar-width: 260px;
+            --progress-bar-height: 4px;
+            --nav-controls-bottom: 30px;
+        }
+
+        /* Dark Mode */
+        [data-theme="dark"] {
+            --bg-primary: #0B0713;
+            --bg-secondary: #140D24;
+            --bg-card: #1A0F2E;
+            --bg-glass: rgba(20, 13, 36, 0.75);
+            --bg-sidebar: rgba(11, 7, 19, 0.9);
+            --bg-canvas: #0B0713;
+
+            --text-primary: #F5F0FF;
+            --text-secondary: #C4B5FD;
+            --text-muted: #8A7A9E;
+            --text-white: #FFFFFF;
+            --text-on-purple: #FFFFFF;
+
+            --border-color: rgba(167, 139, 250, 0.2);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 40px rgba(124, 58, 237, 0.35);
+            --purple-glass: rgba(124, 58, 237, 0.15);
+            --bg-card: #1A0F2E;
+        }
+
+        /* ==================== RESET & BASE ==================== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            transition: background var(--transition-base), color var(--transition-base);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .particle-canvas,
+            .floating-orb,
+            .floating-shape {
+                display: none !important;
+            }
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        a {
+            color: var(--purple-primary);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+        a:hover {
+            color: var(--purple-light);
+        }
+        button {
+            cursor: pointer;
+            font-family: inherit;
+            font-size: inherit;
+            border: none;
+            background: none;
+            color: inherit;
+            transition: all var(--transition-fast);
+        }
+        button:focus-visible,
+        a:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 3px solid var(--purple-primary);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+        ul,
+        ol {
+            list-style: none;
+        }
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+            font-size: inherit;
+            color: var(--text-primary);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--purple-primary);
+            box-shadow: 0 0 0 3px var(--purple-glow);
+            outline: none;
+        }
+
+        /* ==================== PARTICLE BACKGROUND ==================== */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        /* ==================== PROGRESS BAR ==================== */
+        .progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--progress-bar-height);
+            z-index: 1000;
+            background: transparent;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--purple-primary), var(--purple-light));
+            border-radius: 0 2px 2px 0;
+            transition: width var(--transition-base);
+            box-shadow: 0 0 10px var(--purple-glow);
+            width: 10%;
+        }
+
+        /* ==================== PAGE INDICATOR ==================== */
+        .page-indicator {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            z-index: 900;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 6px 16px;
+            letter-spacing: 0.5px;
+            transition: all var(--transition-fast);
+        }
+
+        /* ==================== SIDEBAR NAVIGATION ==================== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            z-index: 800;
+            background: var(--bg-sidebar);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-color);
+            padding: 30px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform var(--transition-base), background var(--transition-base);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--purple-light) transparent;
+            transform: translateX(0); /* default visible on desktop */
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--purple-light);
+            border-radius: 2px;
+        }
+        /* when sidebar is hidden */
+        .sidebar.sidebar-hidden {
+            transform: translateX(-100%);
+        }
+        .sidebar-logo {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--purple-primary);
+            margin-bottom: 30px;
+            letter-spacing: -1px;
+            text-shadow: 0 0 20px var(--purple-glow);
+            user-select: none;
+            text-align: center;
+            line-height: 1.3;
+        }
+        .sidebar-logo small {
+            display: block;
+            font-size: 0.6rem;
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            width: 100%;
+            padding: 0 14px;
+            flex: 1;
+        }
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+            border: 1px solid transparent;
+            position: relative;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+        }
+        .sidebar-nav-item:hover {
+            background: var(--purple-glass);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+        .sidebar-nav-item.active {
+            background: var(--purple-primary);
+            color: var(--text-on-purple);
+            box-shadow: var(--shadow-glow);
+            border-color: transparent;
+        }
+        .sidebar-nav-item .nav-number {
+            font-size: 0.65rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            opacity: 0.7;
+            min-width: 28px;
+            text-align: center;
+        }
+        .sidebar-nav-item.active .nav-number {
+            opacity: 1;
+        }
+
+        /* Theme Toggle in Sidebar */
+        .sidebar-theme-toggle {
+            margin-top: auto;
+            padding: 16px;
+            width: 100%;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+        .theme-toggle-btn {
+            background: var(--purple-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            letter-spacing: 0.5px;
+        }
+        .theme-toggle-btn:hover {
+            background: var(--purple-primary);
+            color: var(--text-on-purple);
+            border-color: var(--purple-primary);
+        }
+
+        /* ==================== MOBILE NAV TOGGLE ==================== */
+        .mobile-nav-toggle {
+            display: flex; /* always visible */
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 950;
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-fast);
+            flex-direction: column;
+            gap: 3px;
+        }
+        .mobile-nav-toggle:hover {
+            background: var(--purple-primary);
+            color: white;
+        }
+        .mobile-nav-toggle .hamburger-line {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: currentColor;
+            border-radius: 2px;
+            transition: all var(--transition-fast);
+        }
+
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 790;
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+            pointer-events: none;
+        }
+        .sidebar-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: margin-left var(--transition-base);
+            overflow: hidden;
+        }
+        /* when sidebar hidden, remove margin */
+        .main-content.sidebar-hidden {
+            margin-left: 0;
+        }
+
+        /* ==================== PAGE SYSTEM ==================== */
+        .pages-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .page {
+            display: none;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            animation: pageIn var(--transition-page);
+            position: relative;
+            padding: 30px 20px;
+        }
+        .page.active {
+            display: block;
+        }
+        .page.flipping-out {
+            animation: pageOut var(--transition-page);
+        }
+
+        @keyframes pageIn {
+            0% {
+                opacity: 0;
+                transform: translateY(24px) scale(0.97);
+                filter: blur(4px);
+            }
+            40% {
+                opacity: 1;
+                filter: blur(0);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+        @keyframes pageOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-24px) scale(0.97);
+                filter: blur(4px);
+            }
+        }
+
+        /* ==================== NAVIGATION CONTROLS ==================== */
+        .nav-controls {
+            position: fixed;
+            bottom: var(--nav-controls-bottom);
+            right: 24px;
+            z-index: 850;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .nav-control-btn {
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-fast);
+            user-select: none;
+        }
+        .nav-control-btn:hover {
+            background: var(--purple-primary);
+            color: white;
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-2px);
+        }
+        .nav-control-btn:disabled {
+            opacity: 0.3;
+            pointer-events: none;
+            transform: none;
+        }
+        .nav-home-btn {
+            background: var(--purple-primary);
+            color: white;
+            box-shadow: var(--shadow-glow);
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+        .nav-home-btn:hover {
+            background: var(--purple-dark);
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        /* ==================== GLASSMORPHISM CARD ==================== */
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            padding: 28px 32px;
+            transition: all var(--transition-base);
+        }
+        .glass-card:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--purple-light);
+        }
+
+        /* ==================== HEADINGS ==================== */
+        .page-title {
+            font-family: var(--font-heading);
+            font-size: 2.4rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .page-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .page-subtitle::before {
+            content: '';
+            width: 40px;
+            height: 2px;
+            background: var(--purple-primary);
+            border-radius: 2px;
+            display: inline-block;
+        }
+        .section-heading {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--purple-primary);
+            margin: 24px 0 16px;
+            letter-spacing: -0.3px;
+        }
+        .section-heading .accent {
+            color: var(--purple-light);
+        }
+
+        /* ==================== BUTTONS ==================== */
+        .btn-primary {
+            background: var(--purple-primary);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow-glow);
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid transparent;
+        }
+        .btn-primary:hover {
+            background: var(--purple-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px var(--purple-glow);
+        }
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--purple-primary);
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+            border: 2px solid var(--purple-primary);
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-outline:hover {
+            background: var(--purple-glass);
+            border-color: var(--purple-light);
+            transform: translateY(-2px);
+        }
+        .btn-sm {
+            padding: 8px 18px;
+            font-size: 0.75rem;
+            border-radius: 40px;
+        }
+
+        /* ==================== COVER PAGE (01) ==================== */
+        .cover-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+            min-height: 70vh;
+            flex-wrap: wrap;
+        }
+        .cover-info {
+            flex: 1;
+            min-width: 280px;
+            max-width: 500px;
+        }
+        .cover-name {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            line-height: 1.15;
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-light), var(--purple-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .cover-school {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        .cover-program {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--purple-primary);
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+        .cover-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+        .cover-badge {
+            background: var(--purple-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 6px 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.3px;
+        }
+        .cover-image-wrapper {
+            flex: 1;
+            min-width: 280px;
+            max-width: 420px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cover-image {
+            width: 100%;
+            max-width: 360px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: var(--radius-xl);
+            border: 3px solid var(--purple-light);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            position: relative;
+            z-index: 5;
+            transition: transform var(--transition-base);
+            background: var(--bg-card);
+        }
+        .cover-image:hover {
+            transform: scale(1.02);
+        }
+        .cover-geometric {
+            position: absolute;
+            border-radius: 24px;
+            pointer-events: none;
+        }
+        .cover-geometric.geo-1 {
+            width: 150px;
+            height: 150px;
+            background: var(--purple-glass);
+            top: -20px;
+            right: -20px;
+            z-index: 1;
+            animation: floatGeo 6s ease-in-out infinite;
+            border: 2px solid var(--border-color);
+        }
+        .cover-geometric.geo-2 {
+            width: 80px;
+            height: 80px;
+            background: var(--purple-light);
+            bottom: -10px;
+            left: -10px;
+            z-index: 2;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: floatGeo 8s ease-in-out infinite reverse;
+        }
+        .cover-geometric.geo-3 {
+            width: 60px;
+            height: 60px;
+            background: transparent;
+            border: 3px solid var(--purple-primary);
+            top: 30%;
+            right: -30px;
+            z-index: 1;
+            border-radius: 50%;
+            animation: floatGeo 7s ease-in-out infinite 1s;
+        }
+        @keyframes floatGeo {
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-15px) rotate(5deg);
+            }
+        }
+        .cover-explore-btn {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            padding: 16px 36px;
+        }
+
+        /* ==================== PROFILE PAGE (02) ==================== */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+        .profile-photo-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            text-align: center;
+        }
+        .profile-photo {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: var(--radius-full);
+            border: 4px solid var(--purple-light);
+            box-shadow: var(--shadow-glow);
+            cursor: pointer;
+            transition: transform var(--transition-base);
+            background: var(--bg-card);
+        }
+        .profile-photo:hover {
+            transform: scale(1.05);
+        }
+        .profile-info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .profile-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+        .profile-info-row .label {
+            font-weight: 600;
+            color: var(--text-muted);
+            min-width: 100px;
+        }
+        .profile-info-row .value {
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: right;
+        }
+        .social-icons-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        .social-icon-link {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--purple-glass);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            transition: all var(--transition-fast);
+            text-decoration: none;
+        }
+        .social-icon-link:hover {
+            background: var(--purple-primary);
+            color: white;
+            border-color: var(--purple-primary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-glow);
+        }
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .tag {
+            background: var(--purple-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 5px 14px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* ==================== STATEMENT PAGE (03) ==================== */
+        .statement-text {
+            font-size: 1rem;
+            line-height: 2;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        .statement-block {
+            margin-bottom: 24px;
+        }
+        .statement-block h4 {
+            font-weight: 800;
+            color: var(--purple-primary);
+            font-size: 1rem;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .highlight-quote {
+            background: var(--purple-glass);
+            border-left: 4px solid var(--purple-primary);
+            padding: 20px 24px;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            margin: 20px 0;
+            font-style: italic;
+            position: relative;
+        }
+        .highlight-quote::before {
+            content: '"';
+            font-size: 3rem;
+            color: var(--purple-light);
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            opacity: 0.5;
+            line-height: 1;
+        }
+
+        /* ==================== EDUCATION PAGE (04) ==================== */
+        .education-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+            transition: all var(--transition-fast);
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--purple-light);
+        }
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--purple-primary);
+            line-height: 1.2;
+        }
+        .stat-card .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .chart-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: var(--bg-glass);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .student-status-doc {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .student-status-doc img {
+            max-width: 300px;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+            margin: 0 auto;
+            transition: all var(--transition-fast);
+        }
+        .student-status-doc img:hover {
+            border-color: var(--purple-light);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ==================== SKILLS PAGE (05) ==================== */
+        .skills-category {
+            margin-bottom: 30px;
+        }
+        .skills-category h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--purple-primary);
+            margin-bottom: 16px;
+            letter-spacing: 0.3px;
+        }
+        .skill-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 10px;
+        }
+        .skill-name {
+            min-width: 120px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .skill-bar-bg {
+            flex: 1;
+            height: 10px;
+            background: var(--purple-glass);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        .skill-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--purple-primary), var(--purple-light));
+            border-radius: 10px;
+            transition: width 1s ease;
+            box-shadow: 0 0 10px var(--purple-glow);
+        }
+        .skill-percent {
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--purple-primary);
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* ==================== ACTIVITIES PAGE (06) ==================== */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            border-left: 3px solid var(--border-color);
+            margin-left: 10px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 28px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .timeline-item:hover .timeline-card {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--purple-light);
+            transform: translateX(4px);
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -38px;
+            top: 20px;
+            width: 14px;
+            height: 14px;
+            background: var(--purple-primary);
+            border-radius: 50%;
+            border: 3px solid var(--bg-primary);
+            box-shadow: 0 0 10px var(--purple-glow);
+        }
+        .timeline-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px 22px;
+            transition: all var(--transition-base);
+            box-shadow: var(--shadow-sm);
+        }
+        .timeline-year {
+            font-weight: 800;
+            color: var(--purple-primary);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+        .timeline-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            margin: 4px 0;
+        }
+        .timeline-role {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .timeline-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .category-badge {
+            display: inline-block;
+            background: var(--purple-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 3px 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.3px;
+            margin-top: 6px;
+        }
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .filter-btn {
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: var(--purple-glass);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            letter-spacing: 0.3px;
+            transition: all var(--transition-fast);
+        }
+        .filter-btn:hover {
+            background: var(--purple-light);
+            color: white;
+            border-color: var(--purple-light);
+        }
+        .filter-btn.active {
+            background: var(--purple-primary);
+            color: white;
+            border-color: var(--purple-primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* ==================== CERTIFICATES PAGE (07) ==================== */
+        .cert-search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 18px;
+            border-radius: 50px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .cert-card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            box-shadow: var(--shadow-sm);
+        }
+        .cert-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--purple-light);
+        }
+        .cert-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background: var(--bg-card);
+            cursor: pointer;
+        }
+        .cert-card-body {
+            padding: 14px 16px;
+        }
+        .cert-card-name {
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .cert-card-org {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .cert-card-year {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--purple-primary);
+        }
+
+        /* ==================== PROJECTS PAGE (08) ==================== */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 22px;
+        }
+        .project-card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--purple-light);
+        }
+        .project-card img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            background: var(--bg-card);
+        }
+        .project-card-body {
+            padding: 16px 18px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .project-card-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .project-card-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .project-card-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex: 1;
+        }
+        .project-tech-tag {
+            display: inline-block;
+            background: var(--purple-glass);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--purple-primary);
+            letter-spacing: 0.3px;
+        }
+
+        /* ==================== ACHIEVEMENTS PAGE (09) ==================== */
+        .achievement-highlight {
+            background: linear-gradient(135deg, var(--purple-glass), var(--purple-bg));
+            border: 2px solid var(--purple-primary);
+            border-radius: var(--radius-lg);
+            padding: 28px 32px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: var(--shadow-glow);
+            position: relative;
+            overflow: hidden;
+        }
+        .achievement-highlight::before {
+            content: '★';
+            position: absolute;
+            top: -20px;
+            right: -10px;
+            font-size: 8rem;
+            opacity: 0.1;
+            color: var(--purple-primary);
+        }
+        .achievement-highlight .ach-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--purple-primary);
+            margin-bottom: 4px;
+        }
+        .achievement-highlight .ach-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+        .achievement-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .achievement-item {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px 22px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+        .achievement-item:hover {
+            border-color: var(--purple-light);
+            box-shadow: var(--shadow-md);
+            transform: translateX(4px);
+        }
+        .achievement-icon {
+            font-size: 1.6rem;
+            color: var(--purple-primary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .achievement-info h4 {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+        .achievement-info p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+        .achievement-info .ach-year {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* ==================== CONTACT PAGE (10) ==================== */
+        .contact-content {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .contact-title {
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        .contact-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        .contact-info-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .contact-info-pill {
+            background: var(--purple-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 10px 22px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-fast);
+        }
+        .contact-info-pill:hover {
+            background: var(--purple-primary);
+            color: white;
+            border-color: var(--purple-primary);
+            transform: translateY(-2px);
+        }
+
+        /* ==================== MODAL SYSTEM ==================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            padding: 20px;
+        }
+        .modal-overlay.show {
+            display: flex;
+            animation: fadeInOverlay 0.3s ease;
+        }
+        @keyframes fadeInOverlay {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            max-width: 700px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 32px;
+            box-shadow: var(--shadow-lg);
+            animation: modalIn 0.4s ease;
+            position: relative;
+        }
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 36px;
+            height: 36px;
+            background: var(--purple-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+            z-index: 10;
+        }
+        .modal-close-btn:hover {
+            background: var(--purple-primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            padding-right: 40px;
+        }
+        .modal-body {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+        .modal-body img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: var(--radius-md);
+            margin: 12px 0;
+            border: 1px solid var(--border-color);
+        }
+        .modal-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .modal-meta span {
+            background: var(--purple-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* ==================== IMAGE VIEWER (Fullscreen) ==================== */
+        .image-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+            padding: 20px;
+        }
+        .image-viewer.show {
+            display: flex;
+        }
+        .image-viewer img {
+            max-width: 95%;
+            max-height: 95%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 0 60px rgba(124, 58, 237, 0.3);
+            animation: zoomInImage 0.3s ease;
+        }
+        @keyframes zoomInImage {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .image-viewer-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .image-viewer-close:hover {
+            background: var(--purple-primary);
+            transform: rotate(90deg);
+        }
+
+        /* ==================== UPLOAD BUTTON ==================== */
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--purple-glass);
+            border: 1px dashed var(--purple-light);
+            border-radius: var(--radius-sm);
+            padding: 8px 16px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--purple-primary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .upload-btn:hover {
+            background: var(--purple-primary);
+            color: white;
+            border-color: var(--purple-primary);
+        }
+        .upload-btn input[type="file"] {
+            display: none;
+        }
+
+        /* ==================== PRINT CSS ==================== */
+        @media print {
+            .sidebar,
+            .nav-controls,
+            .progress-bar-container,
+            .page-indicator,
+            .mobile-nav-toggle,
+            .sidebar-overlay,
+            .theme-toggle-btn,
+            .particle-canvas,
+            #particleCanvas,
+            .cover-geometric,
+            .floating-orb,
+            .floating-shape {
+                display: none !important;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                padding: 0;
+            }
+            .pages-container {
+                padding: 0;
+                display: block;
+            }
+            .page {
+                display: block !important;
+                page-break-after: always;
+                padding: 20px 40px;
+                animation: none !important;
+                max-width: 100%;
+            }
+            .page:last-child {
+                page-break-after: avoid;
+            }
+            body {
+                background: white !important;
+                color: #1A0B2E !important;
+                font-size: 12px;
+            }
+            .glass-card,
+            .stat-card,
+            .timeline-card,
+            .cert-card,
+            .project-card,
+            .achievement-item {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                background: white !important;
+            }
+            .cover-image {
+                max-width: 200px;
+            }
+            .page-title {
+                font-size: 1.8rem;
+            }
+            .cover-name {
+                font-size: 2rem;
+                -webkit-text-fill-color: #7C3AED;
+            }
+            .modal-overlay,
+            .image-viewer {
+                display: none !important;
+            }
+        }
+
+        /* ==================== RESPONSIVE DESIGN ==================== */
+        @media (max-width: 1024px) {
+            :root {
+                --sidebar-width: 220px;
+            }
+            .page-title {
+                font-size: 2rem;
+            }
+            .cover-name {
+                font-size: 2.4rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 0px;
+                --nav-controls-bottom: 18px;
+            }
+            /* sidebar off-canvas by default on mobile */
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+                box-shadow: var(--shadow-lg);
+                transition: transform var(--transition-base), background var(--transition-base);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar.sidebar-hidden {
+                transform: translateX(-100%);
+            }
+            .mobile-nav-toggle {
+                display: flex;
+            }
+            .sidebar-overlay {
+                display: block;
+                pointer-events: none;
+            }
+            .sidebar-overlay.show {
+                pointer-events: auto;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .main-content.sidebar-hidden {
+                margin-left: 0;
+            }
+            .pages-container {
+                padding: 10px;
+                padding-top: 70px;
+                align-items: flex-start;
+            }
+            .page {
+                padding: 16px 10px;
+            }
+            .page-title {
+                font-size: 1.6rem;
+            }
+            .cover-page {
+                flex-direction: column;
+                gap: 30px;
+                min-height: auto;
+                text-align: center;
+            }
+            .cover-name {
+                font-size: 2rem;
+            }
+            .cover-info {
+                max-width: 100%;
+            }
+            .cover-image-wrapper {
+                max-width: 280px;
+            }
+            .cover-image {
+                max-width: 260px;
+            }
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+            .profile-photo {
+                width: 140px;
+                height: 140px;
+            }
+            .nav-controls {
+                right: 12px;
+                bottom: 16px;
+                gap: 6px;
+            }
+            .nav-control-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 1rem;
+            }
+            .page-indicator {
+                top: 14px;
+                right: 14px;
+                font-size: 0.7rem;
+                padding: 4px 12px;
+            }
+            .cert-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+            .project-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            }
+            .modal-content {
+                padding: 20px;
+                max-height: 80vh;
+            }
+            .achievement-highlight {
+                padding: 20px;
+            }
+            .achievement-highlight .ach-title {
+                font-size: 1.2rem;
+            }
+            .contact-title {
+                font-size: 2rem;
+            }
+            .stat-card .stat-value {
+                font-size: 1.5rem;
+            }
+            .timeline {
+                padding-left: 20px;
+                margin-left: 5px;
+            }
+            .timeline-dot {
+                left: -28px;
+                width: 10px;
+                height: 10px;
+            }
+            .skill-name {
+                min-width: 80px;
+                font-size: 0.75rem;
+            }
+            .sidebar-logo {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cover-name {
+                font-size: 1.6rem;
+            }
+            .page-title {
+                font-size: 1.4rem;
+            }
+            .glass-card {
+                padding: 18px 16px;
+            }
+            .cert-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .cert-card img {
+                height: 120px;
+            }
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+            .contact-title {
+                font-size: 1.6rem;
+            }
+            .stat-card {
+                padding: 14px;
+            }
+            .stat-card .stat-value {
+                font-size: 1.2rem;
+            }
+            .btn-primary {
+                padding: 12px 24px;
+                font-size: 0.8rem;
+            }
+            .profile-photo {
+                width: 110px;
+                height: 110px;
+            }
+            .timeline-card {
+                padding: 14px 16px;
+            }
+            .nav-home-btn {
+                font-size: 0.65rem;
+                padding: 0 10px;
+                width: auto;
+                border-radius: 20px;
+            }
+        }
+
+        /* ==================== UTILITY ==================== */
+        .text-center {
+            text-align: center;
+        }
+        .mt-1 {
+            margin-top: 8px;
+        }
+        .mt-2 {
+            margin-top: 16px;
+        }
+        .mt-3 {
+            margin-top: 24px;
+        }
+        .mt-4 {
+            margin-top: 32px;
+        }
+        .mb-2 {
+            margin-bottom: 16px;
+        }
+        .mb-3 {
+            margin-bottom: 24px;
+        }
+        .gap-2 {
+            gap: 16px;
+        }
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        /* Image loading placeholder */
+        .img-placeholder {
+            background: var(--purple-glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== PARTICLE CANVAS ==================== -->
+    <canvas id="particleCanvas" class="particle-canvas" aria-hidden="true"></canvas>
+
+    <!-- ==================== PROGRESS BAR ==================== -->
+    <div class="progress-bar-container" aria-hidden="true">
+        <div class="progress-bar-fill" id="progressBarFill"></div>
+    </div>
+
+    <!-- ==================== PAGE INDICATOR ==================== -->
+    <div class="page-indicator" id="pageIndicator" aria-live="polite">01 / 10</div>
+
+    <!-- ==================== MOBILE NAV TOGGLE (always visible) ==================== -->
+    <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="สลับเมนูนำทาง" aria-expanded="false">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+    </button>
+
+    <!-- ==================== SIDEBAR OVERLAY (Mobile) ==================== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ==================== SIDEBAR NAVIGATION ==================== -->
+    <nav class="sidebar" id="sidebar" aria-label="เมนูหลัก">
+        <div class="sidebar-logo">
+            PORTFOLIO
+            <small>My Journey</small>
+        </div>
+        <div class="sidebar-nav" id="sidebarNav">
+            <!-- Nav items injected by JS -->
+        </div>
+        <div class="sidebar-theme-toggle">
+            <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="สลับธีม">
+                <span id="themeIcon">🌙</span>
+                <span id="themeLabel">Dark Mode</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="main-content" id="mainContent">
+        <div class="pages-container" id="pagesContainer">
+
+            <!-- ==================== PAGE 01: COVER ==================== -->
+            <section class="page active" id="page-01" data-page="1" aria-label="หน้าปก">
+                <div class="cover-page">
+                    <div class="cover-info">
+                        <h1 class="cover-name" id="coverName">ชื่อ-นามสกุล</h1>
+                        <p class="cover-school" id="coverSchool">โรงเรียน</p>
+                        <p class="cover-program" id="coverProgram">Computer Science / IT / Communication Arts</p>
+                        <div class="cover-badges" id="coverBadges">
+                            <span class="cover-badge">Technology</span>
+                            <span class="cover-badge">Creative</span>
+                            <span class="cover-badge">Academic</span>
+                        </div>
+                        <button class="btn-primary cover-explore-btn" id="exploreBtn" aria-label="เริ่มสำรวจ Portfolio">
+                            EXPLORE PORTFOLIO →
+                        </button>
+                    </div>
+                    <div class="cover-image-wrapper">
+                        <div class="cover-geometric geo-1"></div>
+                        <div class="cover-geometric geo-2"></div>
+                        <div class="cover-geometric geo-3"></div>
+                        <img src="" alt="รูปโปรไฟล์" class="cover-image" id="coverProfileImage" loading="lazy">
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== PAGE 02: PROFILE ==================== -->
+            <section class="page" id="page-02" data-page="2" aria-label="ข้อมูลส่วนตัว">
+                <h2 class="page-title">ABOUT ME</h2>
+                <p class="page-subtitle">Profile & Personal Information</p>
+                <div class="profile-grid">
+                    <div class="profile-photo-card glass-card">
+                        <img src="" alt="รูปโปรไฟล์" class="profile-photo" id="profilePhotoLarge" loading="lazy" title="คลิกเพื่อเปลี่ยนรูป">
+                        <button class="upload-btn" id="uploadProfilePhotoBtn" aria-label="อัปโหลดรูปโปรไฟล์">
+                            📷 เปลี่ยนรูป
+                            <input type="file" accept="image/jpeg,image/png,image/webp" id="profilePhotoInput">
+                        </button>
+                        <div class="tags-list" id="profileTags">
+                            <!-- Special abilities & hobbies injected -->
+                        </div>
+                    </div>
+                    <div class="profile-info-list" id="profileInfoList">
+                        <!-- Profile info rows injected by JS -->
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <h3 class="section-heading">Social Media</h3>
+                    <div class="social-icons-row" id="socialIconsRow">
+                        <!-- Social icons injected by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== PAGE 03: STATEMENT ==================== -->
+            <section class="page" id="page-03" data-page="3" aria-label="Statement of Purpose">
+                <h2 class="page-title">MY STATEMENT</h2>
+                <p class="page-subtitle">Statement of Purpose</p>
+                <div class="glass-card">
+                    <div id="statementContent">
+                        <!-- Statement content injected by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== PAGE 04: EDUCATION ==================== -->
+            <section class="page" id="page-04" data-page="4" aria-label="การศึกษา">
+                <h2 class="page-title">EDUCATION</h2>
+                <p class="page-subtitle">Academic Background</p>
+                <div class="education-stats" id="educationStats">
+                    <!-- Stat cards injected by JS -->
+                </div>
+                <div class="chart-container" id="gpaChartContainer">
+                    <canvas id="gpaChart" aria-label="กราฟผลการเรียน"></canvas>
+                </div>
+                <div class="student-status-doc mt-3">
+                    <h3 class="section-heading">Certification of Student Status (ปพ.7)</h3>
+                    <img src="" alt="เอกสาร ปพ.7" id="studentStatusDocImage" loading="lazy" style="display:none; cursor:pointer;" title="คลิกเพื่อดูภาพขนาดใหญ่">
+                    <div id="studentStatusPlaceholder" class="img-placeholder" style="max-width:300px;height:200px;margin:0 auto;border-radius:12px;">
+                        ยังไม่มีเอกสาร — คลิกเพื่ออัปโหลด
+                    </div>
+                    <button class="upload-btn mt-2" id="uploadStudentStatusBtn" aria-label="อัปโหลดเอกสาร ปพ.7">
+                        📄 อัปโหลด ปพ.7
+                        <input type="file" accept="image/jpeg,image/png,image/webp" id="studentStatusInput">
+                    </button>
+                </div>
+            </section>
+
+            <!-- ==================== PAGE 05: SKILLS ==================== -->
+            <section class="page" id="page-05" data-page="5" aria-label="ทักษะ">
+                <h2 class="page-title">MY SKILLS</h2>
+                <p class="page-subtitle">What I Can Do</p>
+                <div id="skillsContent">
+                    <!-- Skills content injected by JS -->
+                </div>
+            </section>
+
+            <!-- ==================== PAGE 06: ACTIVITIES ==================== -->
+            <section class="page" id="page-06" data-page="6" aria-label="กิจกรรม">
+                <h2 class="page-title">ACTIVITIES</h2>
+                <p class="page-subtitle">My Journey & Experiences</p>
+                <div class="filter-buttons" id="activityFilters">
+                    <!-- Filter buttons injected by JS -->
+                </div>
+                <div class="timeline" id="activityTimeline">
+                    <!-- Timeline items injected by JS -->
+                </div>
+            </section>
+
+            <!-- ==================== PAGE 07: CERTIFICATES ==================== -->
+            <section class="page" id="page-07" data-page="7" aria-label="เกียรติบัตร">
+                <h2 class="page-title">CERTIFICATES</h2>
+                <p class="page-subtitle">My Awards & Recognition</p>
+                <input type="text" class="cert-search-input" id="certSearchInput" placeholder="🔍 ค้นหาเกียรติบัตร..." aria-label="ค้นหาเกียรติบัตร">
+                <div class="filter-buttons" id="certFilters">
+                    <!-- Filter buttons injected by JS -->
+                </div>
+                <div class="cert-grid" id="certGrid">
+                    <!-- Certificate cards injected by JS -->
+                </div>
+            </section>
+
+            <!-- ==================== PAGE 08: PROJECTS ==================== -->
+            <section class="page" id="page-08" data-page="8" aria-label="ผลงาน">
+                <h2 class="page-title">MY PROJECTS</h2>
+                <p class="page-subtitle">Portfolio & Works</p>
+                <div class="filter-buttons" id="projectFilters">
+                    <!-- Filter buttons injected by JS -->
+                </div>
+                <div class="project-grid" id="projectGrid">
+                    <!-- Project cards injected by JS -->
+                </div>
+            </section>
+
+            <!-- ==================== PAGE 09: ACHIEVEMENTS ==================== -->
+            <section class="page" id="page-09" data-page="9" aria-label="ความสำเร็จ">
+                <h2 class="page-title">ACHIEVEMENTS</h2>
+                <p class="page-subtitle">My Milestones</p>
+                <div id="achievementsContent">
+                    <!-- Achievement content injected by JS -->
+                </div>
+            </section>
+
+            <!-- ==================== PAGE 10: CONTACT ==================== -->
+            <section class="page" id="page-10" data-page="10" aria-label="ติดต่อ">
+                <div class="contact-content">
+                    <h2 class="contact-title">THANK YOU</h2>
+                    <p class="contact-subtitle">Thank you for exploring my portfolio</p>
+                    <div class="contact-info-grid" id="contactInfoGrid">
+                        <!-- Contact info pills injected by JS -->
+                    </div>
+                    <div class="social-icons-row flex-center mt-3" id="contactSocialIcons">
+                        <!-- Social icons injected -->
+                    </div>
+                    <button class="btn-primary mt-4" id="backToCoverBtn" aria-label="กลับไปหน้าปก">
+                        ← BACK TO COVER
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ==================== NAVIGATION CONTROLS ==================== -->
+    <div class="nav-controls" role="group" aria-label="ปุ่มนำทาง">
+        <button class="nav-control-btn" id="prevPageBtn" aria-label="หน้าก่อนหน้า">‹</button>
+        <button class="nav-control-btn nav-home-btn" id="homeBtn" aria-label="กลับหน้าปก">⌂</button>
+        <button class="nav-control-btn" id="nextPageBtn" aria-label="หน้าถัดไป">›</button>
+    </div>
+
+    <!-- ==================== MODAL OVERLAY ==================== -->
+    <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="modalCloseBtn" aria-label="ปิดหน้าต่าง">✕</button>
+            <h3 class="modal-title" id="modalTitle">Modal</h3>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content injected -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== IMAGE VIEWER ==================== -->
+    <div class="image-viewer" id="imageViewer" role="dialog" aria-label="ดูภาพขนาดใหญ่">
+        <button class="image-viewer-close" id="imageViewerClose" aria-label="ปิด">✕</button>
+        <img src="" alt="ภาพขนาดใหญ่" id="imageViewerImg">
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // ============================================================
+        // PORTFOLIO CONFIG — EDIT YOUR DATA HERE
+        // ============================================================
+        const portfolioData = {
+            profile: {
+                name: "ธนกฤต วงศ์วิริยะ",
+                nickname: "ภูมิ",
+                school: "โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย",
+                province: "กรุงเทพมหานคร",
+                email: "thanakrit.w@student.example.ac.th",
+                phone: "08x-xxx-xxxx",
+                birthday: "15 มีนาคม 2550",
+                age: "17 ปี",
+                bio: "นักเรียนผู้สนใจด้านเทคโนโลยีและการออกแบบ มุ่งมั่นพัฒนาทักษะการเขียนโปรแกรมและการสร้างสรรค์สื่อดิจิทัล",
+                specialAbilities: ["การเขียนโปรแกรม", "ออกแบบ UI/UX", "ตัดต่อวิดีโอ"],
+                hobbies: ["อ่านหนังสือ", "เล่นกีตาร์", "ถ่ายภาพ", "เขียนบล็อก"],
+                profileImage: "" // Base64 image data goes here
+            },
+            education: {
+                gpax: "3.85",
+                tgat: "85.50",
+                tpat: "78.25",
+                ielts: "6.5",
+                school: "โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย",
+                level: "มัธยมศึกษาปีที่ 6",
+                terms: [
+                    { term: "ม.4 เทอม 1", gpa: 3.75 },
+                    { term: "ม.4 เทอม 2", gpa: 3.82 },
+                    { term: "ม.5 เทอม 1", gpa: 3.88 },
+                    { term: "ม.5 เทอม 2", gpa: 3.91 },
+                    { term: "ม.6 เทอม 1", gpa: 3.85 }
+                ],
+                studentStatusDoc: "" // Base64 image of ปพ.7
+            },
+            skills: {
+                technology: [
+                    { name: "HTML", level: 92 },
+                    { name: "CSS", level: 88 },
+                    { name: "JavaScript", level: 80 },
+                    { name: "Python", level: 78 },
+                    { name: "C / C++", level: 65 },
+                    { name: "Database (SQL)", level: 70 },
+                    { name: "Git", level: 75 },
+                    { name: "Firebase", level: 68 }
+                ],
+                creative: [
+                    { name: "Graphic Design", level: 82 },
+                    { name: "UI/UX Design", level: 78 },
+                    { name: "Video Editing", level: 75 },
+                    { name: "Photography", level: 70 },
+                    { name: "Presentation", level: 85 }
+                ],
+                softSkills: [
+                    { name: "Communication", level: 88 },
+                    { name: "Teamwork", level: 90 },
+                    { name: "Leadership", level: 80 },
+                    { name: "Problem Solving", level: 85 },
+                    { name: "Creativity", level: 87 },
+                    { name: "Time Management", level: 75 }
+                ]
+            },
+            statement: {
+                introduction: "ผมเป็นนักเรียนที่มีความหลงใหลในเทคโนโลยีและการสร้างสรรค์นวัตกรรม ตั้งแต่เด็กผมสนใจว่าเว็บไซต์และแอปพลิเคชันทำงานอย่างไร และได้เริ่มเรียนรู้การเขียนโปรแกรมด้วยตนเองตั้งแต่อายุ 14 ปี การได้เห็นโค้ดเปลี่ยนเป็นสิ่งที่ผู้คนใช้งานได้จริงเป็นแรงบันดาลใจให้ผมมุ่งมั่นพัฒนาทักษะนี้อย่างต่อเนื่อง",
+                whyField: "ผมเลือกศึกษาต่อในสาขา Computer Science / IT เพราะเชื่อว่าเทคโนโลยีเป็นเครื่องมือที่ทรงพลังในการแก้ปัญหาและพัฒนาคุณภาพชีวิตของคนในสังคม ผมต้องการเป็นส่วนหนึ่งของการสร้างนวัตกรรมที่เข้าถึงง่ายและมีประโยชน์ต่อผู้คนจำนวนมาก",
+                passion: "สิ่งที่ผมรักมากที่สุดคือการสร้างสรรค์สิ่งใหม่ ๆ จากจินตนาการ ไม่ว่าจะเป็นการออกแบบเว็บไซต์ที่สวยงามและใช้งานง่าย การพัฒนาแอปพลิเคชันที่ตอบโจทย์ผู้ใช้ หรือการสร้างสื่อดิจิทัลที่สื่อความหมายได้อย่างมีประสิทธิภาพ ทุกผลงานที่ผมทำเกิดจากความตั้งใจและความใส่ใจในรายละเอียด",
+                goal: "เป้าหมายระยะสั้นของผมคือการเข้าเรียนในมหาวิทยาลัยเพื่อศึกษาเชิงลึกด้านเทคโนโลยีและการออกแบบ และเป้าหมายระยะยาวคือการเป็นนักพัฒนาที่สามารถสร้างผลิตภัณฑ์ที่มีประโยชน์ต่อสังคม พร้อมทั้งแบ่งปันความรู้ให้กับผู้ที่สนใจ",
+                future: "ในอนาคต ผมอยากทำงานในสาย Full-Stack Development หรือ UI/UX Design เพื่อสร้างประสบการณ์ดิจิทัลที่ยอดเยี่ยมให้กับผู้ใช้ ผมเชื่อว่าการผสมผสานระหว่างทักษะด้านเทคนิคและความคิดสร้างสรรค์จะช่วยให้ผมสร้างสิ่งที่มีคุณค่าและยั่งยืนได้"
+            },
+            activities: [
+                { year: "2567", name: "โครงการแข่งขันพัฒนาเว็บไซต์ระดับประเทศ", role: "หัวหน้าทีม", location: "กรุงเทพฯ",
+                    category: "Competition", description: "นำทีม 3 คนพัฒนาเว็บไซต์เพื่อการศึกษาที่ได้รับรางวัลรองชนะเลิศอันดับ 2",
+                    learning: "ได้เรียนรู้การทำงานเป็นทีม การบริหารเวลา และการแก้ไขปัญหาเฉพาะหน้า",
+                    image: "" },
+                { year: "2567", name: "ค่ายอบรมการเขียนโปรแกรม", role: "ผู้เข้าอบรม", location: "มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี",
+                    category: "Camp", description: "เข้าร่วมค่ายเรียนรู้การพัฒนาเว็บแอปพลิเคชันด้วย JavaScript และ Node.js",
+                    learning: "ได้เรียนรู้เทคโนโลยีใหม่ ๆ และได้แลกเปลี่ยนประสบการณ์กับเพื่อนจากโรงเรียนอื่น",
+                    image: "" },
+                { year: "2566", name: "กิจกรรมจิตอาสาสอนน้องใช้คอมพิวเตอร์", role: "อาสาสมัคร", location: "โรงเรียนประถมในชุมชน",
+                    category: "Volunteer", description: "สอนนักเรียนประถมใช้โปรแกรมพื้นฐานและการใช้งานอินเทอร์เน็ตอย่างปลอดภัย",
+                    learning: "ได้พัฒนาทักษะการสื่อสารและการถ่ายทอดความรู้ให้ผู้อื่นเข้าใจได้ง่าย",
+                    image: "" },
+                { year: "2566", name: "แข่งขันตอบปัญหาทางวิชาการ", role: "ตัวแทนโรงเรียน", location: "มหาวิทยาลัยเกษตรศาสตร์",
+                    category: "Academic", description: "เข้าร่วมการแข่งขันตอบปัญหาด้านคอมพิวเตอร์และเทคโนโลยี",
+                    learning: "ได้ฝึกการคิดวิเคราะห์อย่างเป็นระบบและการทำงานภายใต้ความกดดัน",
+                    image: "" },
+                { year: "2565", name: "ชมรมคอมพิวเตอร์โรงเรียน", role: "สมาชิกชมรม", location: "โรงเรียน",
+                    category: "School Activity", description: "เข้าร่วมกิจกรรมชมรมคอมพิวเตอร์ เรียนรู้การเขียนโปรแกรมเบื้องต้นและสร้างโปรเจกต์ขนาดเล็ก",
+                    learning: "เริ่มต้นเรียนรู้การเขียนโปรแกรมอย่างเป็นระบบและค้นพบความหลงใหลในเทคโนโลยี",
+                    image: "" }
+            ],
+            certificates: [
+                { name: "การแข่งขันพัฒนาเว็บไซต์ระดับประเทศ", org: "สสวท.", year: "2567",
+                    category: "Competition", image: "" },
+                { name: "ค่ายเขียนโปรแกรม JavaScript", org: "มหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี", year: "2567",
+                    category: "Workshop", image: "" },
+                { name: "เกียรติบัตรจิตอาสา", org: "โรงเรียน", year: "2566", category: "Volunteer",
+                image: "" },
+                { name: "ผ่านการอบรม Python เบื้องต้น", org: "Coding Thailand", year: "2566", category: "Technology",
+                    image: "" },
+                { name: "แข่งขันตอบปัญหาวิทยาการคอมพิวเตอร์", org: "มหาวิทยาลัยเกษตรศาสตร์", year: "2566",
+                    category: "Academic", image: "" }
+            ],
+            projects: [
+                { name: "เว็บไซต์ระบบจัดการร้านอาหาร", year: "2567", category: "WEB",
+                    technology: ["HTML", "CSS", "JavaScript", "Firebase"],
+                    description: "พัฒนาเว็บแอปพลิเคชันสำหรับจัดการร้านอาหาร ระบบคิดเงิน สต็อก และรายงานยอดขายแบบเรียลไทม์",
+                    responsibility: "รับผิดชอบการออกแบบ UI/UX และพัฒนาระบบ Frontend ทั้งหมด",
+                    learning: "ได้เรียนรู้การออกแบบระบบที่ซับซ้อน การจัดการ State และการเชื่อมต่อกับฐานข้อมูล",
+                    link: "https://github.com/example/restaurant-app", github: "https://github.com/example/restaurant-app",
+                    image: "" },
+                { name: "แอปพลิเคชันบันทึกการเรียน", year: "2567", category: "APP",
+                    technology: ["Python", "SQLite", "Tkinter"],
+                    description: "พัฒนาแอปพลิเคชันบันทึกการเรียน ตารางสอบ และเกรดสำหรับนักเรียน",
+                    responsibility: "ออกแบบและพัฒนาระบบทั้งหมดด้วยตนเอง",
+                    learning: "ได้เรียนรู้การออกแบบฐานข้อมูลและการพัฒนาโปรแกรมที่มีการใช้งานจริง",
+                    link: "", github: "https://github.com/example/study-tracker", image: "" },
+                { name: "UI/UX Design โมบายแอปสุขภาพ", year: "2566", category: "UI/UX",
+                    technology: ["Figma", "Adobe XD"],
+                    description: "ออกแบบ UI/UX สำหรับแอปพลิเคชันติดตามสุขภาพ เน้นการใช้งานง่ายและเข้าถึงได้",
+                    responsibility: "รับผิดชอบงานออกแบบทั้งหมด ตั้งแต่ User Research จนถึง Prototype",
+                    learning: "ได้เรียนรู้กระบวนการออกแบบโดยยึดผู้ใช้เป็นศูนย์กลาง และการทำ Usability Testing",
+                    link: "", github: "", image: "" },
+                { name: "เว็บไซต์ Portfolio ส่วนตัว", year: "2566", category: "WEB",
+                    technology: ["HTML", "CSS", "JavaScript"],
+                    description: "สร้างเว็บไซต์ Portfolio แรกของตนเองเพื่อแสดงผลงานและทักษะ",
+                    responsibility: "ออกแบบและพัฒนาเว็บไซต์ทั้งหมด",
+                    learning: "เริ่มต้นเรียนรู้การทำ Responsive Design และการออกแบบที่คำนึงถึงผู้ใช้",
+                    link: "", github: "https://github.com/example/portfolio", image: "" }
+            ],
+            achievements: [
+                { year: "2567", title: "รางวัลรองชนะเลิศอันดับ 2 การแข่งขันพัฒนาเว็บไซต์ระดับประเทศ",
+                    description: "จากการแข่งขันที่จัดโดย สสวท. มีผู้เข้าร่วมกว่า 200 ทีมจากทั่วประเทศ",
+                    type: "Competition", highlight: true },
+                { year: "2567", title: "ตัวแทนโรงเรียนเข้าร่วมค่ายเทคโนโลยีระดับประเทศ",
+                    description: "ได้รับการคัดเลือกเป็น 1 ใน 50 คนจากทั่วประเทศ",
+                    type: "Leadership", highlight: false },
+                { year: "2566", title: "รางวัลชนะเลิศการแข่งขันตอบปัญหาทางวิชาการ",
+                    description: "การแข่งขันระดับภาค จัดโดยมหาวิทยาลัยเกษตรศาสตร์",
+                    type: "Academic", highlight: false },
+                { year: "2566", title: "ประธานชมรมคอมพิวเตอร์",
+                    description: "บริหารทีม 20 คน จัดกิจกรรมอบรมและแข่งขันภายในโรงเรียน",
+                    type: "Leadership", highlight: false },
+                { year: "2565", title: "เริ่มต้นเส้นทางการเขียนโปรแกรม",
+                    description: "เริ่มเรียนรู้ HTML/CSS และสร้างเว็บไซต์แรกของตัวเอง",
+                    type: "Other", highlight: false }
+            ],
+            social: {
+                facebook: "https://facebook.com/example",
+                instagram: "https://instagram.com/example",
+                tiktok: "https://tiktok.com/@example",
+                github: "https://github.com/example",
+                linkedin: "https://linkedin.com/in/example"
+            }
+        };
+
+        // ============================================================
+        // FIREBASE CONFIGURATION
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBMqgVndGDz56GAdcXpHwbb_CcjROD3YVw",
+            authDomain: "portfolio-82598.firebaseapp.com",
+            projectId: "portfolio-82598",
+            storageBucket: "portfolio-82598.firebasestorage.app",
+            messagingSenderId: "992985493108",
+            appId: "1:992985493108:web:e7d3759c2617430ae9eb21",
+            measurementId: "G-LPJFWXLZ1M"
+        };
+
+        let firebaseApp = null;
+        let firestoreDB = null;
+        let firebaseStorage = null;
+        let firebaseReady = false;
+
+        // Try to initialize Firebase (optional — site works without it)
+        try {
+            if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length === 0) {
+                firebaseApp = firebase.initializeApp(firebaseConfig);
+                firestoreDB = firebase.firestore ? firebase.firestore() : null;
+                firebaseStorage = firebase.storage ? firebase.storage() : null;
+                firebaseReady = true;
+                console.log('[Firebase] Initialized successfully');
+            } else if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0) {
+                firebaseApp = firebase.apps[0];
+                firestoreDB = firebase.firestore ? firebase.firestore() : null;
+                firebaseStorage = firebase.storage ? firebase.storage() : null;
+                firebaseReady = true;
+                console.log('[Firebase] Already initialized');
+            }
+        } catch (err) {
+            console.warn('[Firebase] Init failed — running in local mode:', err.message);
+        }
+
+        // ============================================================
+        // APPLICATION STATE
+        // ============================================================
+        const state = {
+            currentPage: 1,
+            totalPages: 10,
+            theme: localStorage.getItem('portfolio_theme') || 'light',
+            activityFilter: 'ALL',
+            certFilter: 'ALL',
+            certSearchTerm: '',
+            projectFilter: 'ALL',
+            sidebarOpen: window.innerWidth > 768, // initial state based on screen width
+            imagesLoaded: {} // cache for base64 images
+        };
+
+        const pageNames = {
+            1: 'Cover',
+            2: 'Profile',
+            3: 'Statement',
+            4: 'Education',
+            5: 'Skills',
+            6: 'Activities',
+            7: 'Certificates',
+            8: 'Projects',
+            9: 'Achievements',
+            10: 'Contact'
+        };
+
+        let gpaChartInstance = null;
+
+        // ============================================================
+        // UTILITY FUNCTIONS
+        // ============================================================
+        function getEl(id) { return document.getElementById(id); }
+
+        function getBase64Image(dataUrl) {
+            if (!dataUrl) return '';
+            if (dataUrl.startsWith('data:image')) return dataUrl;
+            return '';
+        }
+
+        function isValidBase64Image(str) {
+            return typeof str === 'string' && str.startsWith('data:image');
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatPhone(phone) {
+            if (!phone) return '';
+            return phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+        }
+
+        function debounce(fn, delay) {
+            let timeoutId;
+            return function(...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => fn.apply(this, args), delay);
+            };
+        }
+
+        function saveToLocalStorage(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+            } catch (e) {
+                console.warn('[Storage] Save failed:', e.message);
+            }
+        }
+
+        function loadFromLocalStorage(key, defaultValue) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : defaultValue;
+            } catch (e) {
+                console.warn('[Storage] Load failed:', e.message);
+                return defaultValue;
+            }
+        }
+
+        // ============================================================
+        // FIREBASE FUNCTIONS (Optional — site works without it)
+        // ============================================================
+        async function saveData(collectionName, docId, data) {
+            if (!firebaseReady || !firestoreDB) {
+                console.warn('[Firebase] Not ready — saving to localStorage');
+                saveToLocalStorage('firebase_' + collectionName + '_' + docId, data);
+                return { success: false, reason: 'firebase-not-ready' };
+            }
+            try {
+                await firestoreDB.collection(collectionName).doc(docId).set(data);
+                return { success: true };
+            } catch (err) {
+                console.warn('[Firebase] Save failed:', err.message);
+                saveToLocalStorage('firebase_' + collectionName + '_' + docId, data);
+                return { success: false, reason: err.message };
+            }
+        }
+
+        async function loadData(collectionName, docId) {
+            if (!firebaseReady || !firestoreDB) {
+                const localData = loadFromLocalStorage('firebase_' + collectionName + '_' + docId, null);
+                return { success: false, data: localData, reason: 'firebase-not-ready' };
+            }
+            try {
+                const docRef = await firestoreDB.collection(collectionName).doc(docId).get();
+                if (docRef.exists) {
+                    return { success: true, data: docRef.data() };
+                }
+                return { success: false, data: null, reason: 'not-found' };
+            } catch (err) {
+                console.warn('[Firebase] Load failed:', err.message);
+                return { success: false, data: null, reason: err.message };
+            }
+        }
+
+        async function uploadImage(path, base64Data) {
+            if (!firebaseReady || !firebaseStorage || !base64Data) {
+                return { success: false, reason: 'firebase-not-ready' };
+            }
+            try {
+                const storageRef = firebaseStorage.ref(path);
+                await storageRef.putString(base64Data, 'data_url');
+                const url = await storageRef.getDownloadURL();
+                return { success: true, url };
+            } catch (err) {
+                console.warn('[Firebase] Upload failed:', err.message);
+                return { success: false, reason: err.message };
+            }
+        }
+
+        async function deleteImage(path) {
+            if (!firebaseReady || !firebaseStorage) {
+                return { success: false, reason: 'firebase-not-ready' };
+            }
+            try {
+                const storageRef = firebaseStorage.ref(path);
+                await storageRef.delete();
+                return { success: true };
+            } catch (err) {
+                console.warn('[Firebase] Delete failed:', err.message);
+                return { success: false, reason: err.message };
+            }
+        }
+
+        // ============================================================
+        // IMAGE SYSTEM (Base64)
+        // ============================================================
+        function imageToBase64(file, maxWidth = 800, maxHeight = 800, quality = 0.8) {
+            return new Promise((resolve, reject) => {
+                if (!file) {
+                    reject(new Error('No file provided'));
+                    return;
+                }
+                if (!file.type.startsWith('image/')) {
+                    reject(new Error('Not an image file'));
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > maxWidth) {
+                            height = height * (maxWidth / width);
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width = width * (maxHeight / height);
+                            height = maxHeight;
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const base64 = canvas.toDataURL(file.type || 'image/jpeg', quality);
+                        resolve(base64);
+                    };
+                    img.onerror = function() {
+                        reject(new Error('Failed to load image'));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.onerror = function() {
+                    reject(new Error('Failed to read file'));
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function base64ToImage(base64Data) {
+            if (!isValidBase64Image(base64Data)) return '';
+            return base64Data;
+        }
+
+        function openImageUpload(inputElement, callback, maxWidth = 800, maxHeight = 800) {
+            inputElement.value = '';
+            inputElement.click();
+            inputElement.onchange = async function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                try {
+                    const base64 = await imageToBase64(file, maxWidth, maxHeight);
+                    if (base64.length > 2 * 1024 * 1024) {
+                        const shouldContinue = confirm(
+                            '⚠️ รูปภาพมีขนาดใหญ่กว่า 2MB การฝังเป็น Base64 จะทำให้ไฟล์ HTML ใหญ่ขึ้นมาก\n\nแนะนำให้ใช้รูปที่บีบอัดแล้ว หรือใช้ Firebase Storage แทน\n\nต้องการดำเนินการต่อหรือไม่?');
+                        if (!shouldContinue) return;
+                    }
+                    callback(base64, file.name);
+                } catch (err) {
+                    alert('❌ ไม่สามารถอ่านรูปภาพได้: ' + err.message);
+                }
+            };
+        }
+
+        // ============================================================
+        // THEME FUNCTIONS
+        // ============================================================
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            const isDark = theme === 'dark';
+            const themeIcon = getEl('themeIcon');
+            const themeLabel = getEl('themeLabel');
+            if (themeIcon) themeIcon.textContent = isDark ? '☀️' : '🌙';
+            if (themeLabel) themeLabel.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+            localStorage.setItem('portfolio_theme', theme);
+            state.theme = theme;
+            // Update canvas particle colors
+            if (window.particleSystem) {
+                window.particleSystem.updateTheme(isDark);
+            }
+        }
+
+        function toggleTheme() {
+            const newTheme = state.theme === 'light' ? 'dark' : 'light';
+            applyTheme(newTheme);
+        }
+
+        // ============================================================
+        // PARTICLE BACKGROUND
+        // ============================================================
+        class ParticleSystem {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.particles = [];
+                this.mouseX = -100;
+                this.mouseY = -100;
+                this.isDark = state.theme === 'dark';
+                this.resize();
+                this.initParticles();
+                this.bindEvents();
+                this.animate();
+            }
+
+            resize() {
+                this.width = this.canvas.width = window.innerWidth;
+                this.height = this.canvas.height = window.innerHeight;
+            }
+
+            initParticles() {
+                const count = Math.min(60, Math.floor(window.innerWidth / 25));
+                this.particles = [];
+                for (let i = 0; i < count; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.width,
+                        y: Math.random() * this.height,
+                        vx: (Math.random() - 0.5) * 0.4,
+                        vy: (Math.random() - 0.5) * 0.4,
+                        radius: Math.random() * 3 + 1,
+                        alpha: Math.random() * 0.5 + 0.2,
+                        pulse: Math.random() * Math.PI * 2
+                    });
+                }
+            }
+
+            bindEvents() {
+                window.addEventListener('resize', () => this.resize());
+                document.addEventListener('mousemove', (e) => {
+                    this.mouseX = e.clientX;
+                    this.mouseY = e.clientY;
+                });
+            }
+
+            updateTheme(isDark) {
+                this.isDark = isDark;
+            }
+
+            animate() {
+                const ctx = this.ctx;
+                ctx.clearRect(0, 0, this.width, this.height);
+
+                const baseColor = this.isDark ? '124, 58, 237' : '167, 139, 250';
+
+                this.particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.pulse += 0.02;
+
+                    if (p.x < -10) p.x = this.width + 10;
+                    if (p.x > this.width + 10) p.x = -10;
+                    if (p.y < -10) p.y = this.height + 10;
+                    if (p.y > this.height + 10) p.y = -10;
+
+                    const dx = p.x - this.mouseX;
+                    const dy = p.y - this.mouseY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const mouseInfluence = Math.max(0, 1 - dist / 150) * 0.8;
+
+                    p.x += dx * mouseInfluence * 0.01;
+                    p.y += dy * mouseInfluence * 0.01;
+
+                    const currentAlpha = p.alpha * (0.7 + Math.sin(p.pulse) * 0.3);
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${baseColor}, ${currentAlpha * 0.5})`;
+                    ctx.fill();
+
+                    // Small glow
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius * 2, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${baseColor}, ${currentAlpha * 0.1})`;
+                    ctx.fill();
+                });
+
+                // Connect nearby particles
+                for (let i = 0; i < this.particles.length; i++) {
+                    for (let j = i + 1; j < this.particles.length; j++) {
+                        const p1 = this.particles[i];
+                        const p2 = this.particles[j];
+                        const dx = p1.x - p2.x;
+                        const dy = p1.y - p2.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 120) {
+                            const alpha = (1 - dist / 120) * 0.15;
+                            ctx.beginPath();
+                            ctx.moveTo(p1.x, p1.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.strokeStyle = `rgba(${baseColor}, ${alpha})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // ============================================================
+        // NAVIGATION SYSTEM
+        // ============================================================
+        function navigateToPage(pageNumber, direction) {
+            if (pageNumber < 1 || pageNumber > state.totalPages) return;
+            if (pageNumber === state.currentPage && !direction) return;
+
+            const oldPage = state.currentPage;
+            state.currentPage = pageNumber;
+
+            // Update DOM
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            const targetPage = getEl(`page-${String(pageNumber).padStart(2, '0')}`);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                targetPage.style.animation = 'none';
+                void targetPage.offsetHeight; // trigger reflow
+                targetPage.style.animation = '';
+            }
+
+            // Update sidebar nav
+            document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+                item.classList.toggle('active', parseInt(item.dataset.page) === pageNumber);
+            });
+
+            // Update progress bar
+            const progress = (pageNumber / state.totalPages) * 100;
+            getEl('progressBarFill').style.width = progress + '%';
+
+            // Update page indicator
+            getEl('pageIndicator').textContent =
+                `${String(pageNumber).padStart(2, '0')} / ${String(state.totalPages).padStart(2, '0')}`;
+
+            // Update nav button states
+            getEl('prevPageBtn').disabled = pageNumber === 1;
+            getEl('nextPageBtn').disabled = pageNumber === state.totalPages;
+
+            // Scroll to top of page content
+            const mainContent = getEl('mainContent');
+            if (mainContent) mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Close mobile sidebar if open
+            if (window.innerWidth <= 768) {
+                closeMobileSidebar();
+            }
+
+            // Re-render chart if on education page
+            if (pageNumber === 4) {
+                setTimeout(() => renderGPAChart(), 300);
+            }
+        }
+
+        function goToNextPage() {
+            if (state.currentPage < state.totalPages) {
+                navigateToPage(state.currentPage + 1, 'next');
+            }
+        }
+
+        function goToPrevPage() {
+            if (state.currentPage > 1) {
+                navigateToPage(state.currentPage - 1, 'prev');
+            }
+        }
+
+        function goHome() {
+            navigateToPage(1, 'home');
+        }
+
+        function toggleSidebar() {
+            const sidebar = getEl('sidebar');
+            const overlay = getEl('sidebarOverlay');
+            if (window.innerWidth <= 768) {
+                // Mobile behavior with overlay
+                if (sidebar.classList.contains('open')) {
+                    closeMobileSidebar();
+                } else {
+                    openMobileSidebar();
+                }
+            } else {
+                // Desktop: toggle sidebar hidden class and adjust main content margin
+                const isHidden = sidebar.classList.contains('sidebar-hidden');
+                if (isHidden) {
+                    sidebar.classList.remove('sidebar-hidden');
+                    getEl('mainContent').classList.remove('sidebar-hidden');
+                    state.sidebarOpen = true;
+                } else {
+                    sidebar.classList.add('sidebar-hidden');
+                    getEl('mainContent').classList.add('sidebar-hidden');
+                    state.sidebarOpen = false;
+                }
+            }
+        }
+
+        function closeMobileSidebar() {
+            getEl('sidebar').classList.remove('open');
+            getEl('sidebarOverlay').classList.remove('show');
+            getEl('mobileNavToggle').setAttribute('aria-expanded', 'false');
+            if (window.innerWidth <= 768) {
+                state.sidebarOpen = false;
+            }
+        }
+
+        function openMobileSidebar() {
+            getEl('sidebar').classList.add('open');
+            getEl('sidebarOverlay').classList.add('show');
+            getEl('mobileNavToggle').setAttribute('aria-expanded', 'true');
+            state.sidebarOpen = true;
+        }
+
+        // ============================================================
+        // PAGE RENDERING
+        // ============================================================
+        function renderCoverPage() {
+            const d = portfolioData;
+            getEl('coverName').textContent = d.profile.name;
+            getEl('coverSchool').textContent = d.profile.school;
+            getEl('coverProgram').textContent = 'Computer Science / IT / Communication Arts';
+
+            const img = getEl('coverProfileImage');
+            if (isValidBase64Image(d.profile.profileImage)) {
+                img.src = d.profile.profileImage;
+                img.alt = `รูปโปรไฟล์ ${d.profile.name}`;
+            } else {
+                img.src = '';
+                img.alt = 'ยังไม่มีรูปโปรไฟล์';
+                img.style.background = 'var(--purple-glass)';
+            }
+        }
+
+        function renderProfilePage() {
+            const d = portfolioData;
+            const p = d.profile;
+
+            // Photo
+            const photoLarge = getEl('profilePhotoLarge');
+            if (isValidBase64Image(p.profileImage)) {
+                photoLarge.src = p.profileImage;
+                photoLarge.alt = `รูปโปรไฟล์ ${p.name}`;
+            } else {
+                photoLarge.src = '';
+                photoLarge.alt = 'ยังไม่มีรูปโปรไฟล์';
+                photoLarge.style.background = 'var(--purple-glass)';
+            }
+
+            // Info rows
+            const infoList = getEl('profileInfoList');
+            const infoItems = [
+                { label: 'ชื่อ-นามสกุล', value: p.name },
+                { label: 'ชื่อเล่น', value: p.nickname },
+                { label: 'วันเกิด', value: p.birthday },
+                { label: 'อายุ', value: p.age },
+                { label: 'โรงเรียน', value: p.school },
+                { label: 'จังหวัด', value: p.province },
+                { label: 'อีเมล', value: p.email },
+                { label: 'โทรศัพท์', value: formatPhone(p.phone) },
+            ];
+            infoList.innerHTML = infoItems.map(item => `
+                <div class="profile-info-row">
+                    <span class="label">${escapeHtml(item.label)}</span>
+                    <span class="value">${escapeHtml(item.value)}</span>
+                </div>
+            `).join('');
+
+            // Tags
+            const tagsContainer = getEl('profileTags');
+            const allTags = [...p.specialAbilities, ...p.hobbies];
+            tagsContainer.innerHTML = allTags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('');
+
+            // Social icons
+            renderSocialIcons(getEl('socialIconsRow'), d.social);
+        }
+
+        function renderSocialIcons(container, social) {
+            const icons = [
+                { key: 'facebook', icon: '📘', label: 'Facebook', url: social.facebook },
+                { key: 'instagram', icon: '📸', label: 'Instagram', url: social.instagram },
+                { key: 'tiktok', icon: '🎵', label: 'TikTok', url: social.tiktok },
+                { key: 'github', icon: '💻', label: 'GitHub', url: social.github },
+                { key: 'linkedin', icon: '💼', label: 'LinkedIn', url: social.linkedin },
+            ];
+            container.innerHTML = icons
+                .filter(item => item.url)
+                .map(item => `
+                    <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" 
+                       class="social-icon-link" aria-label="${item.label}" title="${item.label}">
+                        ${item.icon}
+                    </a>
+                `).join('');
+        }
+
+        function renderStatementPage() {
+            const s = portfolioData.statement;
+            const content = `
+                <div class="statement-block">
+                    <h4>Introduction</h4>
+                    <p class="statement-text">${escapeHtml(s.introduction)}</p>
+                </div>
+                <div class="highlight-quote">
+                    ${escapeHtml(s.passion.split('.')[0])}.
+                </div>
+                <div class="statement-block">
+                    <h4>Why This Field</h4>
+                    <p class="statement-text">${escapeHtml(s.whyField)}</p>
+                </div>
+                <div class="statement-block">
+                    <h4>My Passion</h4>
+                    <p class="statement-text">${escapeHtml(s.passion)}</p>
+                </div>
+                <div class="statement-block">
+                    <h4>My Goal</h4>
+                    <p class="statement-text">${escapeHtml(s.goal)}</p>
+                </div>
+                <div class="statement-block">
+                    <h4>My Future</h4>
+                    <p class="statement-text">${escapeHtml(s.future)}</p>
+                </div>
+            `;
+            getEl('statementContent').innerHTML = content;
+        }
+
+        function renderEducationPage() {
+            const e = portfolioData.education;
+            const statsContainer = getEl('educationStats');
+            const stats = [
+                { label: 'GPAX', value: e.gpax },
+                { label: 'TGAT', value: e.tgat },
+                { label: 'TPAT', value: e.tpat },
+                { label: 'IELTS', value: e.ielts },
+                { label: 'ระดับชั้น', value: e.level },
+            ];
+            statsContainer.innerHTML = stats.map(s => `
+                <div class="stat-card">
+                    <div class="stat-value">${escapeHtml(s.value)}</div>
+                    <div class="stat-label">${escapeHtml(s.label)}</div>
+                </div>
+            `).join('');
+
+            // Student status doc
+            const docImg = getEl('studentStatusDocImage');
+            const placeholder = getEl('studentStatusPlaceholder');
+            if (isValidBase64Image(e.studentStatusDoc)) {
+                docImg.src = e.studentStatusDoc;
+                docImg.style.display = 'block';
+                docImg.alt = 'เอกสาร ปพ.7';
+                placeholder.style.display = 'none';
+            } else {
+                docImg.style.display = 'none';
+                placeholder.style.display = 'flex';
+                placeholder.textContent = 'ยังไม่มีเอกสาร — คลิกเพื่ออัปโหลด';
+            }
+
+            // Render chart
+            setTimeout(() => renderGPAChart(), 200);
+        }
+
+        function renderGPAChart() {
+            const canvas = getEl('gpaChart');
+            if (!canvas || typeof Chart === 'undefined') return;
+
+            const terms = portfolioData.education.terms;
+            const labels = terms.map(t => t.term);
+            const data = terms.map(t => t.gpa);
+
+            if (gpaChartInstance) {
+                gpaChartInstance.destroy();
+            }
+
+            const ctx = canvas.getContext('2d');
+            const isDark = state.theme === 'dark';
+
+            gpaChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'GPA รายเทอม',
+                        data: data,
+                        borderColor: '#7C3AED',
+                        backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                        pointBackgroundColor: '#7C3AED',
+                        pointBorderColor: isDark ? '#1A0F2E' : '#FFFFFF',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 9,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: isDark ? '#C4B5FD' : '#4A3B5E',
+                                font: { family: 'Noto Sans Thai', weight: '600' },
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `GPA: ${context.parsed.y.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 2.5,
+                            max: 4.0,
+                            ticks: {
+                                color: isDark ? '#8A7A9E' : '#8A7A9E',
+                                font: { family: 'Noto Sans Thai' },
+                                callback: function(value) {
+                                    return value.toFixed(2);
+                                }
+                            },
+                            grid: {
+                                color: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: isDark ? '#8A7A9E' : '#8A7A9E',
+                                font: { family: 'Noto Sans Thai', size: 10 },
+                            },
+                            grid: {
+                                display: false,
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderSkillsPage() {
+            const skills = portfolioData.skills;
+            const container = getEl('skillsContent');
+            const categories = [
+                { title: 'Technology', items: skills.technology, icon: '💻' },
+                { title: 'Creative', items: skills.creative, icon: '🎨' },
+                { title: 'Soft Skills', items: skills.softSkills, icon: '🤝' },
+            ];
+
+            container.innerHTML = categories.map(cat => `
+                <div class="skills-category glass-card">
+                    <h3>${cat.icon} ${cat.title}</h3>
+                    ${cat.items.map(skill => `
+                        <div class="skill-item">
+                            <span class="skill-name">${escapeHtml(skill.name)}</span>
+                            <div class="skill-bar-bg" role="progressbar" aria-valuenow="${skill.level}" aria-valuemin="0" aria-valuemax="100" aria-label="${escapeHtml(skill.name)}">
+                                <div class="skill-bar-fill" style="width: ${skill.level}%;"></div>
+                            </div>
+                            <span class="skill-percent">${skill.level}%</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        function renderActivitiesPage() {
+            const activities = portfolioData.activities;
+            const container = getEl('activityTimeline');
+            const filterContainer = getEl('activityFilters');
+
+            const categories = ['ALL', ...new Set(activities.map(a => a.category))];
+
+            filterContainer.innerHTML = categories.map(cat => `
+                <button class="filter-btn ${state.activityFilter === cat ? 'active' : ''}" 
+                        data-filter="${escapeHtml(cat)}" aria-label="กรอง: ${escapeHtml(cat)}">
+                    ${escapeHtml(cat)}
+                </button>
+            `).join('');
+
+            const filtered = state.activityFilter === 'ALL' ?
+                activities :
+                activities.filter(a => a.category === state.activityFilter);
+
+            const sorted = [...filtered].sort((a, b) => parseInt(b.year) - parseInt(a.year));
+
+            container.innerHTML = sorted.map((activity, index) => `
+                <div class="timeline-item" data-index="${index}" data-activity='${JSON.stringify(activity)}'>
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-card">
+                        <div class="timeline-year">📅 ${escapeHtml(activity.year)}</div>
+                        <div class="timeline-title">${escapeHtml(activity.name)}</div>
+                        <div class="timeline-role">บทบาท: ${escapeHtml(activity.role)} | สถานที่: ${escapeHtml(activity.location)}</div>
+                        <div class="timeline-desc">${escapeHtml(activity.description)}</div>
+                        <span class="category-badge">${escapeHtml(activity.category)}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            // Bind click events to timeline items
+            container.querySelectorAll('.timeline-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const activityData = JSON.parse(this.dataset.activity);
+                    openActivityModal(activityData);
+                });
+            });
+
+            // Bind filter buttons
+            filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    state.activityFilter = this.dataset.filter;
+                    renderActivitiesPage();
+                });
+            });
+        }
+
+        function renderCertificatesPage() {
+            const certs = portfolioData.certificates;
+            const grid = getEl('certGrid');
+            const filterContainer = getEl('certFilters');
+
+            const categories = ['ALL', ...new Set(certs.map(c => c.category))];
+
+            filterContainer.innerHTML = categories.map(cat => `
+                <button class="filter-btn ${state.certFilter === cat ? 'active' : ''}" 
+                        data-filter="${escapeHtml(cat)}" aria-label="กรอง: ${escapeHtml(cat)}">
+                    ${escapeHtml(cat)}
+                </button>
+            `).join('');
+
+            let filtered = certs;
+            if (state.certFilter !== 'ALL') {
+                filtered = filtered.filter(c => c.category === state.certFilter);
+            }
+            if (state.certSearchTerm.trim()) {
+                const search = state.certSearchTerm.trim().toLowerCase();
+                filtered = filtered.filter(c =>
+                    c.name.toLowerCase().includes(search) ||
+                    c.org.toLowerCase().includes(search) ||
+                    c.year.includes(search)
+                );
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p class="text-center mt-3" style="color:var(--text-muted);">ไม่พบเกียรติบัตรที่ค้นหา</p>';
+            } else {
+                grid.innerHTML = filtered.map((cert, index) => `
+                    <div class="cert-card" data-index="${index}" data-cert='${JSON.stringify(cert)}'>
+                        ${isValidBase64Image(cert.image) ? 
+                            `<img src="${cert.image}" alt="${escapeHtml(cert.name)}" loading="lazy">` : 
+                            `<div class="img-placeholder" style="height:160px;">📜 ยังไม่มีรูป</div>`}
+                        <div class="cert-card-body">
+                            <div class="cert-card-name">${escapeHtml(cert.name)}</div>
+                            <div class="cert-card-org">${escapeHtml(cert.org)}</div>
+                            <div class="cert-card-year">${escapeHtml(cert.year)}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Bind events
+            grid.querySelectorAll('.cert-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const certData = JSON.parse(this.dataset.cert);
+                    openCertificateModal(certData);
+                });
+            });
+
+            filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    state.certFilter = this.dataset.filter;
+                    renderCertificatesPage();
+                });
+            });
+        }
+
+        function renderProjectsPage() {
+            const projects = portfolioData.projects;
+            const grid = getEl('projectGrid');
+            const filterContainer = getEl('projectFilters');
+
+            const categories = ['ALL', ...new Set(projects.map(p => p.category))];
+
+            filterContainer.innerHTML = categories.map(cat => `
+                <button class="filter-btn ${state.projectFilter === cat ? 'active' : ''}" 
+                        data-filter="${escapeHtml(cat)}" aria-label="กรอง: ${escapeHtml(cat)}">
+                    ${escapeHtml(cat)}
+                </button>
+            `).join('');
+
+            const filtered = state.projectFilter === 'ALL' ?
+                projects :
+                projects.filter(p => p.category === state.projectFilter);
+
+            grid.innerHTML = filtered.map((project, index) => `
+                <div class="project-card" data-index="${index}" data-project='${JSON.stringify(project)}'>
+                    ${isValidBase64Image(project.image) ? 
+                        `<img src="${project.image}" alt="${escapeHtml(project.name)}" loading="lazy">` : 
+                        `<div class="img-placeholder" style="height:170px;">🖼️ ยังไม่มีรูป</div>`}
+                    <div class="project-card-body">
+                        <div class="project-card-title">${escapeHtml(project.name)}</div>
+                        <div class="project-card-meta">
+                            <span>${escapeHtml(project.year)}</span>
+                            <span>${escapeHtml(project.category)}</span>
+                        </div>
+                        <div class="project-card-desc">${escapeHtml(project.description)}</div>
+                        <div class="mt-1">
+                            ${project.technology.map(t => `<span class="project-tech-tag">${escapeHtml(t)}</span>`).join(' ')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Bind events
+            grid.querySelectorAll('.project-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const projectData = JSON.parse(this.dataset.project);
+                    openProjectModal(projectData);
+                });
+            });
+
+            filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    state.projectFilter = this.dataset.filter;
+                    renderProjectsPage();
+                });
+            });
+        }
+
+        function renderAchievementsPage() {
+            const achievements = portfolioData.achievements;
+            const container = getEl('achievementsContent');
+
+            const highlighted = achievements.find(a => a.highlight);
+            const others = achievements.filter(a => !a.highlight);
+
+            let html = '';
+
+            if (highlighted) {
+                html += `
+                    <div class="achievement-highlight">
+                        <div class="ach-title">🏆 ${escapeHtml(highlighted.title)}</div>
+                        <div class="ach-desc">${escapeHtml(highlighted.description)}</div>
+                        <div class="ach-year mt-1">${escapeHtml(highlighted.year)} — ${escapeHtml(highlighted.type)}</div>
+                    </div>
+                `;
+            }
+
+            const sortedOthers = [...others].sort((a, b) => parseInt(b.year) - parseInt(a.year));
+
+            html += `<div class="achievement-list">`;
+            html += sortedOthers.map(ach => `
+                <div class="achievement-item">
+                    <div class="achievement-icon">
+                        ${ach.type === 'Leadership' ? '👑' : ach.type === 'Competition' ? '🏅' : ach.type === 'Academic' ? '📚' : '⭐'}
+                    </div>
+                    <div class="achievement-info">
+                        <h4>${escapeHtml(ach.title)}</h4>
+                        <p>${escapeHtml(ach.description)}</p>
+                        <div class="ach-year">${escapeHtml(ach.year)} — ${escapeHtml(ach.type)}</div>
+                    </div>
+                </div>
+            `).join('');
+            html += `</div>`;
+
+            container.innerHTML = html;
+        }
+
+        function renderContactPage() {
+            const d = portfolioData;
+            const p = d.profile;
+
+            const grid = getEl('contactInfoGrid');
+            const items = [
+                { label: 'ชื่อ', value: p.name },
+                { label: 'อีเมล', value: p.email },
+                { label: 'โทรศัพท์', value: formatPhone(p.phone) },
+                { label: 'โรงเรียน', value: p.school },
+                { label: 'จังหวัด', value: p.province },
+            ];
+            grid.innerHTML = items.map(item => `
+                <div class="contact-info-pill">
+                    <span>${escapeHtml(item.value)}</span>
+                </div>
+            `).join('');
+
+            renderSocialIcons(getEl('contactSocialIcons'), d.social);
+        }
+
+        // ============================================================
+        // MODAL SYSTEM
+        // ============================================================
+        function openModal(title, bodyHtml) {
+            getEl('modalTitle').textContent = title;
+            getEl('modalBody').innerHTML = bodyHtml;
+            getEl('modalOverlay').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            getEl('modalOverlay').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function openActivityModal(activity) {
+            const body = `
+                <div class="modal-meta">
+                    <span>📅 ${escapeHtml(activity.year)}</span>
+                    <span>📍 ${escapeHtml(activity.location)}</span>
+                    <span>🏷️ ${escapeHtml(activity.category)}</span>
+                </div>
+                ${isValidBase64Image(activity.image) ? `<img src="${activity.image}" alt="${escapeHtml(activity.name)}">` : ''}
+                <p><strong>บทบาท:</strong> ${escapeHtml(activity.role)}</p>
+                <p><strong>รายละเอียด:</strong> ${escapeHtml(activity.description)}</p>
+                <p><strong>สิ่งที่ได้เรียนรู้:</strong> ${escapeHtml(activity.learning)}</p>
+            `;
+            openModal(activity.name, body);
+        }
+
+        function openCertificateModal(cert) {
+            const body = `
+                <div class="modal-meta">
+                    <span>🏢 ${escapeHtml(cert.org)}</span>
+                    <span>📅 ${escapeHtml(cert.year)}</span>
+                    <span>🏷️ ${escapeHtml(cert.category)}</span>
+                </div>
+                ${isValidBase64Image(cert.image) ? 
+                    `<img src="${cert.image}" alt="${escapeHtml(cert.name)}" style="cursor:zoom-in;" onclick="openImageViewer('${cert.image}')">` : 
+                    '<p>ยังไม่มีรูปเกียรติบัตร</p>'}
+                <p><strong>${escapeHtml(cert.name)}</strong></p>
+                <p>ออกโดย: ${escapeHtml(cert.org)}</p>
+            `;
+            openModal(cert.name, body);
+        }
+
+        function openProjectModal(project) {
+            const body = `
+                <div class="modal-meta">
+                    <span>📅 ${escapeHtml(project.year)}</span>
+                    <span>🏷️ ${escapeHtml(project.category)}</span>
+                </div>
+                ${isValidBase64Image(project.image) ? 
+                    `<img src="${project.image}" alt="${escapeHtml(project.name)}" style="cursor:zoom-in;" onclick="openImageViewer('${project.image}')">` : 
+                    '<p>ยังไม่มีรูปผลงาน</p>'}
+                <p><strong>เทคโนโลยี:</strong> ${project.technology.map(t => escapeHtml(t)).join(', ')}</p>
+                <p><strong>รายละเอียด:</strong> ${escapeHtml(project.description)}</p>
+                <p><strong>ความรับผิดชอบ:</strong> ${escapeHtml(project.responsibility)}</p>
+                <p><strong>สิ่งที่ได้เรียนรู้:</strong> ${escapeHtml(project.learning)}</p>
+                ${project.link ? `<p><a href="${escapeHtml(project.link)}" target="_blank" rel="noopener noreferrer">🔗 ลิงก์ผลงาน</a></p>` : ''}
+                ${project.github ? `<p><a href="${escapeHtml(project.github)}" target="_blank" rel="noopener noreferrer">💻 GitHub Repository</a></p>` : ''}
+            `;
+            openModal(project.name, body);
+        }
+
+        // ============================================================
+        // IMAGE VIEWER
+        // ============================================================
+        function openImageViewer(src) {
+            if (!isValidBase64Image(src)) {
+                alert('ยังไม่มีรูปภาพนี้');
+                return;
+            }
+            getEl('imageViewerImg').src = src;
+            getEl('imageViewer').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageViewer() {
+            getEl('imageViewer').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // ============================================================
+        // SIDEBAR NAV RENDERING
+        // ============================================================
+        function renderSidebarNav() {
+            const navContainer = getEl('sidebarNav');
+            const items = [
+                { page: 1, label: 'Cover' },
+                { page: 2, label: 'Profile' },
+                { page: 3, label: 'Statement' },
+                { page: 4, label: 'Education' },
+                { page: 5, label: 'Skills' },
+                { page: 6, label: 'Activities' },
+                { page: 7, label: 'Certificates' },
+                { page: 8, label: 'Projects' },
+                { page: 9, label: 'Achievements' },
+                { page: 10, label: 'Contact' },
+            ];
+
+            navContainer.innerHTML = items.map(item => `
+                <button class="sidebar-nav-item ${state.currentPage === item.page ? 'active' : ''}" 
+                        data-page="${item.page}" 
+                        aria-label="ไปหน้า ${item.label}"
+                        role="menuitem">
+                    <span class="nav-number">${String(item.page).padStart(2, '0')}</span>
+                    <span>${item.label}</span>
+                </button>
+            `).join('');
+
+            navContainer.querySelectorAll('.sidebar-nav-item').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    navigateToPage(parseInt(this.dataset.page), 'nav');
+                });
+            });
+        }
+
+        // ============================================================
+        // IMAGE UPLOAD HANDLERS
+        // ============================================================
+        function setupImageUploads() {
+            // Profile photo upload
+            getEl('uploadProfilePhotoBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const input = getEl('profilePhotoInput');
+                openImageUpload(input, (base64) => {
+                    portfolioData.profile.profileImage = base64;
+                    renderCoverPage();
+                    renderProfilePage();
+                    saveToLocalStorage('portfolio_data', portfolioData);
+                    saveData('portfolio', 'main', portfolioData).then(r => {
+                        if (r.success) console.log('[Firebase] Data saved');
+                    });
+                    alert('✅ อัปโหลดรูปโปรไฟล์สำเร็จ');
+                }, 500, 500, 0.7);
+            });
+
+            // Student status doc upload
+            getEl('uploadStudentStatusBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const input = getEl('studentStatusInput');
+                openImageUpload(input, (base64) => {
+                    portfolioData.education.studentStatusDoc = base64;
+                    renderEducationPage();
+                    saveToLocalStorage('portfolio_data', portfolioData);
+                    saveData('portfolio', 'main', portfolioData).then(r => {
+                        if (r.success) console.log('[Firebase] Data saved');
+                    });
+                    alert('✅ อัปโหลดเอกสาร ปพ.7 สำเร็จ');
+                }, 600, 800, 0.7);
+            });
+
+            // Student status placeholder click
+            getEl('studentStatusPlaceholder').addEventListener('click', function() {
+                getEl('uploadStudentStatusBtn').click();
+            });
+
+            // Student status image click → fullscreen
+            getEl('studentStatusDocImage').addEventListener('click', function() {
+                if (this.src && this.src.startsWith('data:image')) {
+                    openImageViewer(this.src);
+                }
+            });
+
+            // Profile photo click → upload
+            getEl('profilePhotoLarge').addEventListener('click', function() {
+                getEl('uploadProfilePhotoBtn').click();
+            });
+        }
+
+        // ============================================================
+        // EVENT LISTENERS
+        // ============================================================
+        function setupEventListeners() {
+            // Navigation
+            getEl('prevPageBtn').addEventListener('click', goToPrevPage);
+            getEl('nextPageBtn').addEventListener('click', goToNextPage);
+            getEl('homeBtn').addEventListener('click', goHome);
+            getEl('exploreBtn').addEventListener('click', () => navigateToPage(2, 'next'));
+            getEl('backToCoverBtn').addEventListener('click', goHome);
+
+            // Theme toggle
+            getEl('themeToggleBtn').addEventListener('click', toggleTheme);
+
+            // Mobile nav toggle (now also desktop toggle)
+            getEl('mobileNavToggle').addEventListener('click', toggleSidebar);
+
+            // Sidebar overlay click (mobile)
+            getEl('sidebarOverlay').addEventListener('click', closeMobileSidebar);
+
+            // Modal close
+            getEl('modalCloseBtn').addEventListener('click', closeModal);
+            getEl('modalOverlay').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+
+            // Image viewer close
+            getEl('imageViewerClose').addEventListener('click', closeImageViewer);
+            getEl('imageViewer').addEventListener('click', function(e) {
+                if (e.target === this || e.target === getEl('imageViewerImg')) {
+                    closeImageViewer();
+                }
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    goToNextPage();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    goToPrevPage();
+                } else if (e.key === 'Home') {
+                    e.preventDefault();
+                    goHome();
+                } else if (e.key === 'Escape') {
+                    closeModal();
+                    closeImageViewer();
+                    if (window.innerWidth <= 768) {
+                        closeMobileSidebar();
+                    }
+                }
+            });
+
+            // Touch swipe
+            let touchStartX = 0;
+            let touchEndX = 0;
+            const mainContent = getEl('mainContent');
+            mainContent.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+            mainContent.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                const diff = touchStartX - touchEndX;
+                if (Math.abs(diff) > 60) {
+                    if (diff > 0) {
+                        goToNextPage();
+                    } else {
+                        goToPrevPage();
+                    }
+                }
+            }, { passive: true });
+
+            // Cert search
+            const certSearch = getEl('certSearchInput');
+            certSearch.addEventListener('input', debounce(function() {
+                state.certSearchTerm = this.value;
+                renderCertificatesPage();
+            }, 350));
+
+            // Resize handler for particles & sidebar state
+            window.addEventListener('resize', debounce(function() {
+                if (window.particleSystem) {
+                    window.particleSystem.resize();
+                    window.particleSystem.initParticles();
+                }
+                // Adjust sidebar if crossing breakpoint
+                const isMobile = window.innerWidth <= 768;
+                const sidebar = getEl('sidebar');
+                if (isMobile) {
+                    // Ensure mobile classes are in sync
+                    sidebar.classList.remove('sidebar-hidden');
+                    getEl('mainContent').classList.remove('sidebar-hidden');
+                    if (state.sidebarOpen) {
+                        sidebar.classList.add('open');
+                        getEl('sidebarOverlay').classList.add('show');
+                    } else {
+                        sidebar.classList.remove('open');
+                        getEl('sidebarOverlay').classList.remove('show');
+                    }
+                } else {
+                    // Desktop
+                    sidebar.classList.remove('open');
+                    getEl('sidebarOverlay').classList.remove('show');
+                    if (state.sidebarOpen) {
+                        sidebar.classList.remove('sidebar-hidden');
+                        getEl('mainContent').classList.remove('sidebar-hidden');
+                    } else {
+                        sidebar.classList.add('sidebar-hidden');
+                        getEl('mainContent').classList.add('sidebar-hidden');
+                    }
+                }
+            }, 300));
+        }
+
+        // ============================================================
+        // LOAD DATA FROM LOCALSTORAGE
+        // ============================================================
+        function loadSavedData() {
+            const saved = loadFromLocalStorage('portfolio_data', null);
+            if (saved) {
+                // Deep merge with defaults
+                if (saved.profile) Object.assign(portfolioData.profile, saved.profile);
+                if (saved.education) {
+                    Object.assign(portfolioData.education, saved.education);
+                    if (saved.education.terms) portfolioData.education.terms = saved.education.terms;
+                }
+                if (saved.skills) portfolioData.skills = saved.skills;
+                if (saved.statement) portfolioData.statement = saved.statement;
+                if (saved.activities) portfolioData.activities = saved.activities;
+                if (saved.certificates) portfolioData.certificates = saved.certificates;
+                if (saved.projects) portfolioData.projects = saved.projects;
+                if (saved.achievements) portfolioData.achievements = saved.achievements;
+                if (saved.social) portfolioData.social = saved.social;
+                console.log('[Storage] Data loaded from localStorage');
+            }
+            // Try Firebase load
+            if (firebaseReady) {
+                loadData('portfolio', 'main').then(result => {
+                    if (result.success && result.data) {
+                        const data = result.data;
+                        if (data.profile) Object.assign(portfolioData.profile, data.profile);
+                        if (data.education) {
+                            Object.assign(portfolioData.education, data.education);
+                            if (data.education.terms) portfolioData.education.terms = data.education
+                                .terms;
+                        }
+                        if (data.skills) portfolioData.skills = data.skills;
+                        if (data.statement) portfolioData.statement = data.statement;
+                        if (data.activities) portfolioData.activities = data.activities;
+                        if (data.certificates) portfolioData.certificates = data.certificates;
+                        if (data.projects) portfolioData.projects = data.projects;
+                        if (data.achievements) portfolioData.achievements = data.achievements;
+                        if (data.social) portfolioData.social = data.social;
+                        // Re-render all pages
+                        renderAllPages();
+                        console.log('[Firebase] Data loaded from Firestore');
+                    }
+                });
+            }
+        }
+
+        // ============================================================
+        // RENDER ALL PAGES
+        // ============================================================
+        function renderAllPages() {
+            renderSidebarNav();
+            renderCoverPage();
+            renderProfilePage();
+            renderStatementPage();
+            renderEducationPage();
+            renderSkillsPage();
+            renderActivitiesPage();
+            renderCertificatesPage();
+            renderProjectsPage();
+            renderAchievementsPage();
+            renderContactPage();
+
+            // Update progress and nav states
+            const progress = (state.currentPage / state.totalPages) * 100;
+            getEl('progressBarFill').style.width = progress + '%';
+            getEl('pageIndicator').textContent =
+                `${String(state.currentPage).padStart(2, '0')} / ${String(state.totalPages).padStart(2, '0')}`;
+            getEl('prevPageBtn').disabled = state.currentPage === 1;
+            getEl('nextPageBtn').disabled = state.currentPage === state.totalPages;
+        }
+
+        // ============================================================
+        // EXPOSE FUNCTIONS TO GLOBAL SCOPE (for inline onclick)
+        // ============================================================
+        window.openImageViewer = openImageViewer;
+        window.closeImageViewer = closeImageViewer;
+        window.closeModal = closeModal;
+        window.navigateToPage = navigateToPage;
+
+        // ============================================================
+        // INITIALIZATION
+        // ============================================================
+        function init() {
+            console.log('[Portfolio] Initializing...');
+
+            // Apply theme
+            applyTheme(state.theme);
+
+            // Load saved data
+            loadSavedData();
+
+            // Initialize particle system
+            const canvas = getEl('particleCanvas');
+            if (canvas && window.innerWidth > 480) {
+                // Only on larger screens for performance
+                window.particleSystem = new ParticleSystem(canvas);
+            }
+
+            // Set up event listeners
+            setupEventListeners();
+
+            // Set up image uploads
+            setupImageUploads();
+
+            // Render all pages
+            renderAllPages();
+
+            // Set initial sidebar state based on screen width
+            if (window.innerWidth <= 768) {
+                state.sidebarOpen = false;
+                getEl('sidebar').classList.remove('open');
+                getEl('sidebarOverlay').classList.remove('show');
+            } else {
+                state.sidebarOpen = true;
+                getEl('sidebar').classList.remove('sidebar-hidden');
+                getEl('mainContent').classList.remove('sidebar-hidden');
+            }
+            getEl('mobileNavToggle').setAttribute('aria-expanded', state.sidebarOpen ? 'true' : 'false');
+
+            // Navigate to page 1
+            navigateToPage(1, 'init');
+
+            console.log('[Portfolio] Initialization complete');
+            console.log('[Portfolio] Firebase ready:', firebaseReady);
+            console.log('[Portfolio] Theme:', state.theme);
+            console.log('[Portfolio] Pages:', state.totalPages);
+        }
+
+        // Run on DOM ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
+        // ============================================================
+        // END OF SCRIPT
+        // ============================================================
+    </script>
+</body>
+</html>
